@@ -1,0 +1,2965 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="artifact-type" content="tool">
+<meta name="design-style" content="briefing">
+<title>VIII анги · Хичээл хоорондын интеграцчилсан интерактив ажлын хуудас</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Noto+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+
+  /* 1. Briefing style tokens */
+  --background: #faf9f5;
+  --surface-container-low: #ffffff;
+  --surface-container: #f1efe8;
+  --surface-container-high: #e6e2d6;
+
+  --on-surface: #17181a;
+  --on-surface-variant: #56585c;
+
+  --outline: #17181a;
+  --outline-variant: #dedad0;
+  --border-secondary: #c8c4b8;
+
+  --primary: #17181a;
+  --on-primary: #faf9f5;
+  --primary-container: #f2b705;
+  --on-primary-container: #17181a;
+  --secondary: #1f4e5f;
+  --on-secondary: #ffffff;
+  --tertiary: #785008;
+  --error: #b42318;
+  --on-error: #ffffff;
+
+  --data-1: #1f4e5f;
+  --data-2: #d99000;
+  --data-3: #2b6e52;
+  --data-4: #b84a39;
+  --data-context: #c4bfb2;
+
+  /* Fonts with full Mongolian Cyrillic support */
+  --font-headline: 'Source Serif 4', 'Noto Sans', serif;
+  --font-body: 'Noto Sans', sans-serif;
+  --font-label: 'JetBrains Mono', 'Noto Sans', monospace;
+
+  --rounded: 0.25rem;
+  --rounded-lg: 0.375rem;
+  --rounded-full: 0.25rem;
+
+  --section-rule: 1.5px solid var(--outline);
+  --card-border: 1px solid var(--outline-variant);
+  --badge-radius: 2px;
+  --heading-tracking: -0.02em;
+  --label-tracking: 0.04em;
+
+  /* 3. Shared semantic & foundation tokens */
+  --positive: #2b6e52;
+  --warning: #b86a00;
+  --focus: #1f4e5f;
+
+  --tint-gold: #f5e6c4;
+  --tint-green: #e7f3ed;
+  --tint-red: #fbeceb;
+  --tint-blue: #e8f1f5;
+
+  --display-size: clamp(1.65rem, 1.35rem + 1.1vw, 2.25rem);
+  --headline-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+  --subhead-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --body-size: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+  --label-size: 0.75rem;
+
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long: 420ms;
+}
+
+/* Base reset */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { overflow-x: clip; margin: 0; padding: 0; }
+header { position: static !important; }
+
+body {
+  background: var(--background);
+  color: var(--on-surface);
+  font-family: var(--font-body);
+  font-size: var(--body-size);
+  line-height: 1.6;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.page-grid {
+  display: grid;
+  gap: var(--space-lg);
+  padding: var(--space-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.page-grid * { min-width: 0; }
+
+/* Dossier Header & Masthead */
+.dossier-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  border-bottom: var(--section-rule);
+  padding-bottom: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.dossier-bar-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.dossier-pill {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--label-size);
+  letter-spacing: var(--label-tracking);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--badge-radius);
+}
+
+.dossier-meta {
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  color: var(--on-surface-variant);
+}
+
+.masthead-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+.title {
+  font-family: var(--font-headline);
+  font-weight: 600;
+  font-size: var(--display-size);
+  letter-spacing: var(--heading-tracking);
+  line-height: 1.12;
+  margin: 0;
+  color: var(--on-surface);
+}
+
+.standfirst {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--subhead-size);
+  color: var(--secondary);
+  margin: var(--space-sm) 0 0 0;
+  max-width: 65ch;
+}
+
+/* Summary / Scoreboard card */
+.figure-card {
+  background: var(--surface-container-low);
+  border: var(--card-border);
+  border-radius: var(--rounded-lg);
+  padding: var(--space-md) var(--space-lg);
+}
+
+.summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+}
+
+.metric-label {
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  color: var(--on-surface-variant);
+  display: block;
+}
+
+.metric-value {
+  font-family: var(--font-headline);
+  font-weight: 600;
+  font-size: var(--headline-size);
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--on-surface);
+  display: block;
+  margin-top: var(--space-xs);
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: var(--surface-container);
+  border-radius: var(--rounded);
+  overflow: hidden;
+  margin-top: var(--space-md);
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--secondary);
+  width: 0%;
+  transition: width var(--dur-short) var(--ease-out);
+}
+
+/* Student Info & Actions Bar */
+.student-bar {
+  background: var(--surface-container);
+  border-top: var(--section-rule);
+  border-radius: var(--rounded-lg);
+  padding: var(--space-md) var(--space-lg);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  gap: var(--space-md);
+  align-items: end;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.field-label {
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.text-input, .select-input, .textarea-input {
+  width: 100%;
+  background: var(--surface-container-low);
+  border: var(--card-border);
+  border-radius: var(--rounded);
+  padding: var(--space-sm) var(--space-md);
+  min-height: 44px;
+  color: var(--on-surface);
+  transition: border-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+}
+
+.select-input {
+  padding-right: var(--space-xl);
+}
+
+.textarea-input {
+  min-height: 96px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.text-input:hover, .select-input:hover, .textarea-input:hover {
+  border-color: var(--secondary);
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--rounded);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+.btn-primary:hover { background: var(--secondary); }
+
+.btn-secondary {
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+  border-color: var(--border-secondary);
+}
+.btn-secondary:hover { background: var(--surface-container-high); }
+
+.btn-accent {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  border-color: var(--outline);
+}
+.btn-accent:hover { background: var(--tint-gold); }
+
+.btn-danger {
+  background: var(--surface-container-low);
+  color: var(--error);
+  border-color: var(--error);
+}
+.btn-danger:hover { background: var(--tint-red); }
+
+/* Topic Navigation Tabs */
+.nav-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.nav-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.topic-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: var(--space-sm);
+}
+
+.topic-tab {
+  text-align: left;
+  background: var(--surface-container-low);
+  border: var(--card-border);
+  border-radius: var(--rounded-lg);
+  padding: var(--space-sm) var(--space-md);
+  min-height: 44px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+}
+
+.topic-tab:hover {
+  background: var(--surface-container);
+  border-color: var(--secondary);
+}
+
+.topic-tab.is-active {
+  background: var(--surface-container-low);
+  border-color: var(--outline);
+  box-shadow: inset 4px 0 0 var(--primary-container), 0 0 0 1px var(--outline);
+}
+
+.topic-tab-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.index-num {
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--label-size);
+  color: var(--secondary);
+}
+
+.topic-tab-score {
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  padding: 2px var(--space-xs);
+  border-radius: var(--badge-radius);
+  background: var(--surface-container);
+  color: var(--on-surface-variant);
+}
+
+.topic-tab.is-done .topic-tab-score {
+  background: var(--tint-green);
+  color: var(--positive);
+}
+
+.topic-tab-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.35;
+  color: var(--on-surface);
+}
+
+/* Workspace Layout */
+.workspace-shell {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+.topic-hero {
+  background: var(--surface-container-low);
+  border: var(--card-border);
+  border-top: 3px solid var(--outline);
+  border-radius: var(--rounded-lg);
+  padding: var(--space-lg);
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--space-lg);
+}
+
+.topic-title {
+  font-family: var(--font-headline);
+  font-weight: 600;
+  font-size: var(--headline-size);
+  letter-spacing: var(--heading-tracking);
+  line-height: 1.2;
+  margin: var(--space-xs) 0 var(--space-sm) 0;
+}
+
+.subject-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
+}
+
+.subject-chip {
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--rounded);
+  background: var(--tint-gold);
+  color: var(--tertiary);
+  font-weight: 600;
+}
+
+.subject-chip--primary {
+  background: var(--tint-blue);
+  color: var(--secondary);
+}
+
+.weight-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  background: var(--surface-container);
+  padding: var(--space-md);
+  border-radius: var(--rounded);
+}
+
+.weight-bar-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-xs);
+  font-size: 0.875rem;
+}
+
+.weight-track {
+  grid-column: 1 / -1;
+  height: 6px;
+  background: var(--surface-container-low);
+  border-radius: var(--rounded);
+  overflow: hidden;
+}
+
+.weight-fill {
+  height: 100%;
+  background: var(--data-1);
+}
+
+/* Knowledge Base Drawer */
+.kb-card {
+  background: var(--surface-container-low);
+  border: var(--card-border);
+  border-radius: var(--rounded-lg);
+  overflow: hidden;
+}
+
+.kb-toggle {
+  width: 100%;
+  background: var(--surface-container);
+  border: none;
+  border-bottom: var(--card-border);
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  cursor: pointer;
+  text-align: left;
+  min-height: 52px;
+}
+
+.kb-toggle:hover {
+  background: var(--surface-container-high);
+}
+
+.kb-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.kb-heading {
+  font-family: var(--font-headline);
+  font-weight: 600;
+  font-size: var(--subhead-size);
+  margin: 0;
+}
+
+.kb-body {
+  padding: var(--space-lg);
+  display: grid;
+  gap: var(--space-md);
+}
+
+.kb-body.is-collapsed {
+  display: none;
+}
+
+.kb-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: var(--space-md);
+}
+
+.kb-panel {
+  background: var(--background);
+  border: var(--card-border);
+  border-radius: var(--rounded);
+  padding: var(--space-md);
+}
+
+.kb-panel h4 {
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  color: var(--secondary);
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.kb-list {
+  margin: 0;
+  padding-left: var(--space-lg);
+  display: grid;
+  gap: var(--space-xs);
+  font-size: 0.9375rem;
+}
+
+.kb-confirm-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  border-top: var(--card-border);
+  padding-top: var(--space-md);
+}
+
+.kb-source-note {
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  color: var(--on-surface-variant);
+}
+
+/* Level Filter Pills */
+.level-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  border-bottom: var(--section-rule);
+  padding-bottom: var(--space-sm);
+}
+
+.level-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.level-pill {
+  min-height: 44px;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--rounded);
+  border: var(--card-border);
+  background: var(--surface-container-low);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.level-pill:hover { background: var(--surface-container); }
+
+.level-pill.is-active {
+  background: var(--primary);
+  color: var(--on-primary);
+  border-color: var(--primary);
+}
+
+/* Differentiated Tier Cards */
+.tier-card {
+  background: var(--surface-container-low);
+  border: var(--card-border);
+  border-radius: var(--rounded-lg);
+  padding: var(--space-lg);
+  display: grid;
+  gap: var(--space-md);
+}
+
+.tier-card.is-hidden { display: none; }
+
+.tier-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  border-bottom: var(--card-border);
+  padding-bottom: var(--space-sm);
+}
+
+.tier-badge-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.tier-badge {
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  font-weight: 600;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--badge-radius);
+}
+
+.tier-badge--bulag { background: var(--tint-green); color: var(--positive); }
+.tier-badge--togol { background: var(--tint-blue); color: var(--secondary); }
+.tier-badge--orgil { background: var(--tint-gold); color: var(--tertiary); }
+
+.tier-title {
+  font-family: var(--font-headline);
+  font-weight: 600;
+  font-size: var(--subhead-size);
+  margin: 0;
+}
+
+.tier-points {
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  color: var(--on-surface-variant);
+}
+
+/* Task Items */
+.task-block {
+  background: var(--background);
+  border: var(--card-border);
+  border-radius: var(--rounded);
+  padding: var(--space-md);
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.task-question {
+  font-weight: 600;
+  margin: 0;
+  max-width: 70ch;
+}
+
+.task-hint {
+  font-size: 0.875rem;
+  color: var(--on-surface-variant);
+  margin: 0;
+}
+
+.mcq-options {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+.mcq-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  min-height: 44px;
+  border: var(--card-border);
+  border-radius: var(--rounded);
+  background: var(--surface-container-low);
+  cursor: pointer;
+}
+
+.mcq-option:hover {
+  background: var(--surface-container);
+  border-color: var(--secondary);
+}
+
+.mcq-option.is-selected {
+  border-color: var(--secondary);
+  background: var(--tint-blue);
+}
+
+.mcq-option.is-correct {
+  border-color: var(--positive);
+  background: var(--tint-green);
+}
+
+.mcq-option.is-wrong {
+  border-color: var(--error);
+  background: var(--tint-red);
+}
+
+.feedback-line {
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--rounded);
+}
+
+.feedback-line--ok { background: var(--tint-green); color: var(--positive); }
+.feedback-line--err { background: var(--tint-red); color: var(--error); }
+.feedback-line--info { background: var(--tint-blue); color: var(--secondary); }
+
+/* Interactive Data Tables & Calculators */
+.calc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  gap: var(--space-md);
+  align-items: end;
+}
+
+.calc-result-box {
+  background: var(--surface-container);
+  border-left: 4px solid var(--secondary);
+  padding: var(--space-md);
+  border-radius: var(--rounded);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.data-table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface-container-low);
+}
+
+.data-table th {
+  text-align: left;
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  padding: var(--space-sm);
+  border-bottom: var(--section-rule);
+  color: var(--on-surface-variant);
+}
+
+.data-table td {
+  padding: var(--space-sm);
+  border-bottom: var(--card-border);
+  vertical-align: top;
+}
+
+/* Timer widget (Topic 8) */
+.timer-widget {
+  background: var(--surface-container);
+  border-radius: var(--rounded);
+  padding: var(--space-md);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.timer-readout {
+  font-family: var(--font-label);
+  font-size: 1.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--secondary);
+}
+
+/* Rubric checklist (Orgil) */
+.rubric-checks {
+  display: grid;
+  gap: var(--space-xs);
+  background: var(--surface-container);
+  padding: var(--space-md);
+  border-radius: var(--rounded);
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 36px;
+  cursor: pointer;
+}
+
+/* Export Preview Panel */
+.export-panel {
+  background: var(--surface-container-low);
+  border: var(--card-border);
+  border-top: var(--section-rule);
+  border-radius: var(--rounded-lg);
+  padding: var(--space-lg);
+  display: grid;
+  gap: var(--space-md);
+}
+
+.export-panel.is-hidden { display: none; }
+
+.export-pre {
+  background: var(--background);
+  border: var(--card-border);
+  border-radius: var(--rounded);
+  padding: var(--space-md);
+  font-family: var(--font-label);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  max-height: 360px;
+  overflow-y: auto;
+  margin: 0;
+}
+
+/* Topic Footer Nav */
+.topic-footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  border-top: var(--section-rule);
+  padding-top: var(--space-md);
+}
+
+.status-toast {
+  font-family: var(--font-label);
+  font-size: var(--label-size);
+  color: var(--positive);
+}
+
+.sources-footer {
+  border-top: var(--card-border);
+  padding-top: var(--space-md);
+  font-size: 0.875rem;
+  color: var(--on-surface-variant);
+}
+
+@media (max-width: 640px) {
+  .page-grid { padding: var(--space-sm); gap: var(--space-md); }
+  .masthead-grid { grid-template-columns: 1fr; }
+  .student-bar { grid-template-columns: 1fr; }
+  .topic-hero { grid-template-columns: 1fr; }
+  .summary-metrics { grid-template-columns: 1fr 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+body.teacher-mode .student-bar,body.teacher-mode #export-panel,body.teacher-mode .nav-section,body.teacher-mode #workspace-root,body.teacher-mode .sources-footer{display:none!important}
+.st-det{border-top:1px solid #dedad0;padding:8px 0}.st-det summary{cursor:pointer;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.st-chip{font:600 .8rem 'JetBrains Mono',monospace;background:#eef1ee;border-radius:4px;padding:2px 6px}
+.st-ans{background:#f1efe8;border-radius:6px;padding:8px;margin:6px 0;white-space:pre-wrap;font-size:.9rem}
+@media print{.student-bar,#teacher-login,.action-row{display:none!important}#teacher-board{display:block!important}}
+</style>
+</head>
+<body>
+<div class="page-grid">
+
+  <!-- Masthead -->
+  <header>
+    <div class="dossier-bar">
+      <div class="dossier-bar-left">
+        <span class="dossier-pill">VIII АНГИ · ИНТЕГРАЦ</span>
+        <span class="dossier-meta">ГАЗАР ЗҮЙ · ТҮҮХ · НИЙГЭМ СУДЛАЛ · ИРГЭНИЙ ЁС ЗҮЙ</span>
+      </div>
+      <span class="dossier-meta" id="save-status">Автомат хадгалалт бэлэн</span>
+    </div>
+
+    <div class="masthead-grid">
+      <div>
+        <h1 class="title">VIII ангийн хичээл хоорондын интеграцчилсан интерактив ажлын хуудас</h1>
+        <p class="standfirst">Ерөнхий боловсролын VIII ангийн 9 цогц сэдвийн дагуу сурах бичгийн мэдлэгийн санг судалж, «Булаг», «Төгөл», «Оргил» гурваас сэдэв бүрт нэгийг нь сонгон, 20 онооны ажлын хуудсыг бие даан гүйцэтгээрэй.</p>
+      </div>
+
+      <div class="figure-card">
+        <div class="summary-metrics">
+          <div>
+            <span class="metric-label">НИЙТ ОНОО</span>
+            <span class="metric-value" id="global-score">0 / 180</span>
+          </div>
+          <div>
+            <span class="metric-label">СЭДЭВ ГҮЙЦЭТГЭЛ</span>
+            <span class="metric-value" id="global-progress">0 / 9</span>
+          </div>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <div class="progress-fill" id="global-progress-bar"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Student Identity & Export Controls -->
+  <section class="figure-card is-hidden" id="teacher-login">
+    <h2 class="tier-title">Багшийн нэвтрэлт</h2>
+    <div class="field-group"><label class="field-label" for="t-email">Имэйл</label><input class="text-input" id="t-email" type="email" autocomplete="username"></div>
+    <div class="field-group"><label class="field-label" for="t-pass">Нууц үг</label><input class="text-input" id="t-pass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')teacherLogin()"></div>
+    <div class="action-row"><button type="button" class="btn btn-primary" onclick="teacherLogin()">Нэвтрэх</button></div>
+    <p class="task-hint" id="t-msg" style="color:#b42318"></p>
+  </section>
+
+  <section class="figure-card is-hidden" id="teacher-board" aria-label="Багшийн самбар">
+    <div class="dossier-bar"><div class="dossier-bar-left"><span class="dossier-pill">БАГШИЙН САМБАР</span><span class="dossier-meta" id="board-stamp"></span></div></div>
+    <div class="summary-metrics" id="board-kpi" style="margin-top:12px"></div>
+    <h3 class="tier-title" style="margin-top:18px">Сэдвээр нэгтгэсэн дүн</h3>
+    <div class="data-table-wrap"><table class="data-table"><thead><tr><th>Сэдэв</th><th>Булаг</th><th>Төгөл</th><th>Оргил</th><th>Дундаж оноо / 20</th></tr></thead><tbody id="board-topics"></tbody></table></div>
+    <h3 class="tier-title" style="margin-top:18px">Сурагч бүрийн дүн ба хариулт</h3>
+    <div id="board-students"></div>
+    <div class="action-row" style="margin-top:16px">
+      <button type="button" class="btn btn-primary" onclick="exportBoardCSV()">CSV татах</button>
+      <button type="button" class="btn btn-secondary" onclick="window.print()">Хэвлэх</button>
+      <button type="button" class="btn btn-secondary" onclick="teacherLogout()">Гарах</button>
+      <button type="button" class="btn btn-danger" id="board-reset" onclick="resetBoard(this)">Шинэ хичээл эхлүүлэх (бүх сурагчийн дүнг устгах)</button>
+    </div>
+  </section>
+
+  <section class="student-bar" aria-label="Сурагчийн мэдээлэл ба экспорт">
+    <div class="field-group">
+      <label class="field-label" for="student-name">Сурагчийн овог, нэр</label>
+      <input class="text-input" id="student-name" type="text" placeholder="Жишээ: Б.Тэмүүлэн" oninput="updateStudentField('name', this.value)">
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="student-class">Анги, бүлэг</label>
+      <input class="text-input" id="student-class" type="text" placeholder="Жишээ: 8А" oninput="updateStudentField('className', this.value)">
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="student-region">Аймаг / Дүүрэг</label>
+      <input class="text-input" id="student-region" type="text" placeholder="Жишээ: Өвөрхангай / Баянзүрх" oninput="updateStudentField('region', this.value)">
+    </div>
+    <div class="action-row">
+      <button type="button" class="btn btn-accent" onclick="toggleExportPanel()">Багшид экспортлох</button>
+      <button type="button" class="btn btn-danger" id="btn-reset-all" onclick="handleResetAll(this)">Шинээр эхлэх</button>
+    </div>
+  </section>
+
+  <!-- Export Panel (Inline, toggled) -->
+  <section class="export-panel is-hidden" id="export-panel" aria-label="Тайлан экспортлох хэсэг">
+    <div class="nav-header-row">
+      <h2 class="tier-title">Багшид илгээх гүйцэтгэлийн тайлан</h2>
+      <div class="action-row">
+        <button type="button" class="btn btn-primary" onclick="downloadReport('txt')">Тайлан татах (.txt)</button>
+        <button type="button" class="btn btn-secondary" onclick="downloadReport('csv')">Хүснэгт татах (.csv)</button>
+        <button type="button" class="btn btn-secondary" onclick="copyReportText()">Текст хуулах</button>
+        <button type="button" class="btn btn-secondary" onclick="toggleExportPanel()">Хаах</button>
+      </div>
+    </div>
+    <div class="status-toast" id="export-feedback" role="status"></div>
+    <pre class="export-pre" id="export-preview"></pre>
+  </section>
+
+  <!-- 9 Topic Navigation Tabs -->
+  <nav class="nav-section" aria-label="9 сэдвийн цэс">
+    <div class="nav-header-row">
+      <span class="dossier-meta">СЭДЭВ СОНГОХ (01–09)</span>
+      <span class="dossier-meta" id="active-topic-indicator">Идэвхтэй: Сэдэв 01</span>
+    </div>
+    <div class="topic-tabs" id="topic-tabs"></div>
+  </nav>
+
+  <!-- Active Topic Workspace -->
+  <main class="workspace-shell" id="workspace-root"></main>
+
+  <footer class="sources-footer">
+    <strong>Эх сурвалж:</strong> «Газар зүй VIII» (Е.Батчулуун ба бусад, 2023), «Түүх VIII» (Ц.Гантулга ба бусад, 2019), «VIII ангийн хичээл хоорондын интеграц ба арга зүйн материал» (Сэдэв №1–№9).
+  </footer>
+
+</div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getFirestore,doc,setDoc,deleteDoc,onSnapshot,collection,getDocs} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+const app=initializeApp({apiKey:"AIzaSyAOJgy_EiTzOXhgahICVtYNwvrKoQOZcoI",authDomain:"ajliin-huudas.firebaseapp.com",projectId:"ajliin-huudas",storageBucket:"ajliin-huudas.firebasestorage.app",messagingSenderId:"926406690781",appId:"1:926406690781:web:d6a395102c573fddc41834"});
+const db=getFirestore(app),auth=getAuth(app);
+let res;const ready=new Promise(r=>res=r);
+onAuthStateChanged(auth,u=>res(u));
+window.FBAUTH={ready,login:(e,p)=>signInWithEmailAndPassword(auth,e,p),logout:()=>signOut(auth)};
+window.FBDB={
+  set:(c,id,d)=>setDoc(doc(db,c,id),d),
+  del:(c,id)=>deleteDoc(doc(db,c,id)),
+  list:async c=>(await getDocs(collection(db,c))).docs.map(d=>d.id),
+  watch:(c,n,e)=>onSnapshot(collection(db,c),q=>n(q.docs.map(d=>({id:d.id,...d.data()}))),e)
+};
+</script>
+<script>
+const TOPICS = [
+  {
+    id: 1,
+    code: `01`,
+    title: `Орон нутгийн байгаль орчны тулгамдсан асуудал, уул уурхайн нөлөөлөл ба шийдэл`,
+    subjects: [
+      { name: `Газар зүй`, pct: 50 },
+      { name: `Нийгэм судлал`, pct: 30 },
+      { name: `Түүх`, pct: 20 }
+    ],
+    objectives: `Г38.4г, Г38.4ж, Г38.5б · Нийгэм 8.1б, 8.3в · Түүх 8.3е`,
+    kb: {
+      concepts: [
+        `Монгол оронд 80 төрлийн ашигт малтмалын 1170 орд бүртгэгдсэн (Оюутолгой, Тавантолгой, Нарийн сухайт, Шивээ-Овоо, Бороо, Мардай, Асгат, Цагаан суварга, Төмөртийн овоо).`,
+        `Ашигт малтмалын тархалт нь геологийн тогтоц, гадаргын хэв шинж, хурдас чулуулгийн шинж чанараас хамаарна.`,
+        `Нэг газар удаан бэлчээрлэвэл хөрс, ургамал талхагдаж нөхөн сэргэх нь удааширдаг тул малчид улирлаар отор нүүдэл хийн сэлгэж ашигладаг.`
+      ],
+      facts: [
+        `Бэлчээрийн доройтол (Байгаль орчны тайлан 2016): 38.4% (2.4 сая га) мэрэгч, хортон шавжид идэгдсэн; 31.9% (2.05 сая га) талхлагдсан; 24.6% (1.5 сая га) цөлжсөн; 3.1% (201.7 мян.га) элсний нүүлтэд өртсөн.`,
+        `Салхи, усны эвдрэл 1.2% (25 мян.га), ашигт малтмалын олборлолтоос бохирдсон 0.8% (53.8 мян.га), намагжсан 0.2% (15.7 мян.га).`,
+        `Уур амьсгалын дулааралт: Монгол орны агаарын температур сүүлийн 76 жилд 2.24°C-ээр дулаарсан.`
+      ],
+      history: [
+        `Түүх VIII (8.3е): XIX зууны Аж үйлдвэрийн хувьсгалын үед Английн Лондон хотод нүүрсний утаа, үйлдвэрийн бохирдол ихэсч «Их утаа» үүссэн ч хууль тогтоомж, түлшний шинэчлэлээр даван туулсан.`,
+        `Энэхүү түүхэн сургамжийг өнөөгийн Улаанбаатарын агаарын бохирдол, орон нутгийн уул уурхайн нөлөөлөлтэй харьцуулан шийдэл боловсруулдаг.`
+      ]
+    },
+    bulag: [
+      {
+        id: `t1_b1`,
+        type: `mcq`,
+        question: `1. Монгол оронд одоогоор хэдэн төрлийн ашигт малтмалын нийт хэдэн орд бүртгэгдсэн бэ? («Газар зүй VIII»)`,
+        options: [
+          `40 төрлийн 560 орд`,
+          `80 төрлийн 1170 орд`,
+          `120 төрлийн 2050 орд`,
+          `29 төрлийн 800 орд`
+        ],
+        answer: 1,
+        explain: `«Газар зүй VIII» сурах бичигт Монгол оронд 80 төрлийн ашигт малтмалын 1170 орд бий гэж тэмдэглэсэн.`
+      },
+      {
+        id: `t1_b2`,
+        type: `mcq`,
+        question: `2. 2016 оны Байгаль орчны тайланд дурдсанаар Монголын бэлчээрийн газрын хэдэн хувь нь цөлжсөн гэж тэмдэглэсэн бэ?`,
+        options: [
+          `0.8% (53.8 мян.га)`,
+          `12.5% (0.9 сая га)`,
+          `24.6% (1.5 сая га)`,
+          `38.4% (2.4 сая га)`
+        ],
+        answer: 2,
+        explain: `Цөлжилт 24.6% (1.5 сая га), талхлагдал 31.9% (2.05 сая га), мэрэгчид хортон шавж 38.4% (2.4 сая га) эзэлдэг.`
+      },
+      {
+        id: `t1_b3`,
+        type: `match`,
+        question: `3. Дор дурдсан ордуудыг ашигт малтмалын үндсэн төрөлтэй нь зөв тохируулаарай.`,
+        pairs: [
+          { label: `Тавантолгой, Шивээ-Овоо`, options: [`Зэс, алт`, `Нүүрс`, `Уран`, `Мөнгө`], answer: 1 },
+          { label: `Оюутолгой, Цагаан суварга`, options: [`Зэс, алт/молибден`, `Нүүрс`, `Төмөр`, `Цайр`], answer: 0 },
+          { label: `Мардай`, options: [`Нүүрс`, `Алт`, `Уран`, `Газрын тос`], answer: 2 }
+        ]
+      }
+    ],
+    togol: {
+      title: `Бэлчээрийн доройтлын тооцоолол ба Ашиг сонирхлын зураглал`,
+      desc: `Сурах бичгийн баримтыг ашиглан тоон тооцоолол хийж, орон нутгийн оролцогч талуудын байр суурийг шинжлэнэ үү.`,
+      calc: {
+        prompt: `Талхлагдсан 2.05 сая га, цөлжсөн 1.5 сая га, элсний нүүлтэд өртсөн 0.2017 сая га (201.7 мян.га) талбайн нийлбэр хэдэн сая га болох вэ? (Таслалын ард 2 оронтой тоогоор бичнэ үү)`,
+        unit: `сая га`,
+        expected: 3.75,
+        tolerance: 0.05,
+        hint: `Тооцоо: 2.05 + 1.50 + 0.2017 = 3.7517 сая га`
+      },
+      tablePrompt: `Оролцогч талуудын эрх ашиг ба сөрөг үр дагаврыг өөрийн орон нутгийн жишээн дээр бичнэ үү.`,
+      tableCols: [`Оролцогч талууд`, `Тэдний байр суурь, эрх ашиг`, `Амсаж буй сөрөг үр дагавар`],
+      tableRows: [
+        `Малчид / Оршин суугчид`,
+        `Уул уурхай / Аж ахуйн нэгж`,
+        `Орон нутгийн засаг захиргаа`
+      ]
+    },
+    orgil: {
+      title: `Түүхэн сургамж ба Ногоон шийдлийн төсөл`,
+      prompt: `XIX зууны Аж үйлдвэрийн хувьсгалын үед Лондон хот агаарын бохирдолтой (утаатай) хэрхэн тэмцэж шийдвэрлэсэн туршлагыг өнөөгийн Улаанбаатар хот болон танай орон нутгийн уул уурхай, байгаль орчны тулгамдсан асуудалтай харьцуулан хэрэгжүүлж болох 3 бодит шийдэл боловсруулна уу.`,
+      rubric: [
+        `Лондонгийн аж үйлдвэрийн утааны түүхэн баримтыг зөв холбосон`,
+        `Газар зүйн статистик эсвэл орон нутгийн бодит нөхцөлийг дурдсан`,
+        `Хэрэгжүүлж болохуйц 3 тодорхой, бодит санал дэвшүүлсэн`
+      ]
+    }
+  },
+  {
+    id: 2,
+    code: `02`,
+    title: `Монгол орны угсаатны бүрэлдэхүүн, соёлын өвөрмөц байдал ба хүндэтгэл`,
+    subjects: [
+      { name: `Нийгэм судлал`, pct: 40 },
+      { name: `Газар зүй`, pct: 30 },
+      { name: `Түүх`, pct: 20 },
+      { name: `ИЁЗБ`, pct: 10 }
+    ],
+    objectives: `Нийгэм 8.2а, 8.2б · Г38.3б · Түүх 8.2а, 8.3г · ИЁЗБ 2.1`,
+    kb: {
+      concepts: [
+        `Монгол Улс нь олон угсаатан, ястны соёлын баялаг өвтэй: Халх, Казак, Дөрвөд, Буриад, Баяд, Дарьганга, Урианхай, Захчин, Дархад, Торгууд, Өөлд, Хотон, Мянгад, Барга, Үзэмчин гэх мэт.`,
+        `Угсаатан бүрийн хувцас, аялгуу, найр наадмын ёс, аж ахуйн хэв маяг нь тухайн нутгийн газар зүйн орчин, түүхэн замналтай нягт холбоотой.`
+      ],
+      facts: [
+        `Газар зүйн тархалт: Баруун бүсэд (Баян-Өлгий, Увс, Ховд) казак, дөрвөд, баяд, захчин, торгууд, урианхай, хотон; Хойд бүсэд (Хөвсгөл, Сэлэнгэ, Хэнтий, Дорнод) дархад, буриад, барга; Зүүн/Төв бүсэд халх, дарьганга, үзэмчин түлхүү оршино.`,
+        `ИЁЗБ (2.1): Соёлын ялгааг хүндлэх, гадуурхахгүй байх, тэгш сэтгэлээр харилцах нь нийгмийн эв нэгдлийн үндэс.`
+      ],
+      history: [
+        `Түүх VIII (8.2а, 8.3г): XV–XVII зуунд Монголын эзэнт гүрний дараах дотоодын зөрчил, түүхэн нөхцөлийн улмаас Монголчууд Халх, Өвөр, Ойрад гэсэн гурван том хэсэгт хуваагдсан.`,
+        `XVIII–XX зууны соёлын уламжлал, нүүдэл суудал нь өнөөгийн ястнуудын газар зүйн байршил бүрэлдэхэд нөлөөлсөн.`
+      ]
+    },
+    bulag: [
+      {
+        id: `t2_b1`,
+        type: `mcq`,
+        question: `1. Монголын эзэнт гүрний дараах үед (XV–XVIII зуун) Монгол Улс үндсэн ямар гурван бүлэгт хуваагдсан бэ?`,
+        options: [
+          `Халх, Буриад, Барга`,
+          `Халх, Өвөр, Ойрад`,
+          `Дөрвөд, Торгууд, Урианхай`,
+          `Сэлэнгэ, Хэрлэн, Орхон`
+        ],
+        answer: 1,
+        explain: `Түүхэн сурвалжид XV–XVIII зуунд Монгол Улс Халх, Өвөр, Ойрад хэмээн хуваагдсан гэж тэмдэглэдэг.`
+      },
+      {
+        id: `t2_b2`,
+        type: `mcq`,
+        question: `2. Казак, дөрвөд, торгууд, захчин, өөлд ястнууд газар зүйн хувьд Монгол орны аль бүс нутагт түлхүү суурьшсан бэ?`,
+        options: [
+          `Зүүн бүс (Дорнод, Сүхбаатар)`,
+          `Баруун бүс (Баян-Өлгий, Увс, Ховд)`,
+          `Өмнөд говийн бүс`,
+          `Зөвхөн Хэнтийн нуруу`
+        ],
+        answer: 1,
+        explain: `Баруун Монголын Алтай, Их нууруудын хотгор орчимд казак болон Ойрадын олон угсаатан амьдардаг.`
+      },
+      {
+        id: `t2_b3`,
+        type: `match`,
+        question: `3. Угсаатан, ястныг голчлон тархсан аймагтай нь холбоорой.`,
+        pairs: [
+          { label: `Дарьганга`, options: [`Сүхбаатар`, `Баян-Өлгий`, `Хөвсгөл`, `Увс`], answer: 0 },
+          { label: `Дархад`, options: [`Дорнод`, `Хөвсгөл`, `Өмнөговь`, `Сэлэнгэ`], answer: 1 },
+          { label: `Барга, Буриад`, options: [`Говь-Алтай`, `Ховд`, `Дорнод, Хэнтий`, `Өвөрхангай`], answer: 2 }
+        ]
+      }
+    ],
+    togol: {
+      title: `Угсаатны соёлын өвийн танилцуулга`,
+      desc: `Өөрийн орон нутаг эсвэл сонирхсон угсаатны бүлгийн өвөрмөц соёлыг системчлэн шинжилнэ үү.`,
+      calc: {
+        prompt: `Ойролцоогоор 1935 онд эхэлсэн аймаг, сумдын бүтцээс өнөөдөр Монгол Улс нийт хэдэн аймагтай вэ? (Тоогоор бичнэ үү)`,
+        unit: `аймаг`,
+        expected: 21,
+        tolerance: 0,
+        hint: `Монгол Улс 21 аймаг, 1 нийслэлтэй.`
+      },
+      tablePrompt: `Сонгосон угсаатны бүлгийн соёлын өвийн 3 бүрэлдэхүүнийг тодорхойлж бичнэ үү.`,
+      tableCols: [`Соёлын өвийн төрөл`, `Онцлог, нэршил`, `Утга учир ба байгальтай холбогдох шинж`],
+      tableRows: [
+        `Үндэсний хувцас, гоёл чимэглэл`,
+        `Уламжлалт дуу хуур, биелгээ / хөгжим`,
+        `Найр наадам, зочлох ёс эсвэл гар урлал`
+      ]
+    },
+    orgil: {
+      title: `Соёлын ялгааг хүндэтгэх «3 алтан дүрэм»`,
+      prompt: `Хүмүүс өөр угсаатан, соёлын төлөөлөлтэй харилцахдаа ямар хэвшмэл ойлголт, алдаа гаргадаг вэ? Бусдыг гадуурхахгүй, ялгаатай соёлыг хүндэтгэн харилцах 3 алтан дүрэм зохиож, үндэслэлийг тайлбарлана уу.`,
+      rubric: [
+        `Ялгаатай соёлтой харилцахад гардаг нийтлэг алдааг илрүүлсэн`,
+        `Тодорхой, хэрэгжүүлэх боломжтой 3 алтан дүрэм боловсруулсан`,
+        `Тэгш сэтгэл ба хүндэтгэлийн ёс зүйн ач холбогдлыг дүгнэсэн`
+      ]
+    }
+  },
+  {
+    id: 3,
+    code: `03`,
+    title: `Дэлхийн газар зүйн их нээлт, колоничлол ба орон зайн дүрслэл`,
+    subjects: [
+      { name: `Түүх`, pct: 50 },
+      { name: `Газар зүй`, pct: 30 },
+      { name: `Нийгэм судлал`, pct: 20 }
+    ],
+    objectives: `Түүх 8.2в, 8.3м · Г38.1а, Г38.1в · Нийгэм 8.4а`,
+    kb: {
+      concepts: [
+        `Газар зүйн их нээлт (XV–XVI зуун): Европчууд Энэтхэг, Хятад руу далайн шинэ зам хайснаар дэлхийн худалдаа, газар зүйн мэдлэгт эргэлт гарсан.`,
+        `Зураг зүйн тусгаг: Бөмбөрцөг (глобус) дээрх гадаргыг хавтгай зурагт (цилиндр тусгаг) буулгахад экватороос туйл руу чиглэх тусам зай, талбай сунаж гаждаг.`
+      ],
+      facts: [
+        `Үнэмлэхүй байрлал: Өргөрөг (экватороос хойд/өмнөд 0°–90°) ба уртраг (Гринвичийн голдочоос зүүн/баруун 0°–180°).`,
+        `Монгол Улс нь Төв Азийн эх газрын гүнд, далайд гарцгүй байрлалтай тул далайн тээвэр, гадаад худалдаанд транзит тээвэр чухал үүрэгтэй.`
+      ],
+      history: [
+        `1492 он: Х.Колумб Атлантын далайг гаталж Америк тивд хүрсэн. 1497–1498 он: Васко да Гама Африкийг тойрч Энэтхэгт хүрсэн. 1519–1522 он: Ф.Магелланы баг дэлхийг анх удаа тойрсон.`,
+        `Колоничлолын сөрөг үр дагавар: Уугуул иргэдийн газар нутаг булаагдах, соёл устах, боолчлол үүсч хүний жам ёсны эрх зөрчигдсөн.`
+      ]
+    },
+    bulag: [
+      {
+        id: `t3_b1`,
+        type: `mcq`,
+        question: `1. Дэлхийг анх удаа далайгаар тойрон аялж, дэлхий бөөрөнхий болохыг нотолсон экспедицийг хэн удирдсан бэ?`,
+        options: [
+          `Христофор Колумб (1492)`,
+          `Васко да Гама (1498)`,
+          `Фернан Магеллан (1519–1522)`,
+          `Жеймс Кук (1768)`
+        ],
+        answer: 2,
+        explain: `Ф.Магелланы удирдсан аялал 1519–1522 онд дэлхийг анх удаа усан замаар тойрсон.`
+      },
+      {
+        id: `t3_b2`,
+        type: `mcq`,
+        question: `2. Цилиндр тусгагтай хавтгай газрын зураг дээр аль бүс нутгийн талбай бодит хэмжээнээсээ хамгийн их гажиж том харагддаг вэ?`,
+        options: [
+          `Экваторын бүс`,
+          `Өндөр өргөрөг буюу туйл орчмын бүс`,
+          `Зөвхөн Атлантын далай`,
+          `Зөвхөн Монгол орны нутаг`
+        ],
+        answer: 1,
+        explain: `Цилиндр тусгаг нь экватор орчимд нарийвчлалтай боловч туйл руу ойртох тусам голдоч шугамууд параллель зурагдаж талбай их сунадаг.`
+      },
+      {
+        id: `t3_b3`,
+        type: `match`,
+        question: `3. Газар зүйн их нээлтийн үр дагаврыг эерэг ба сөрөг төрөлд ангилна уу.`,
+        pairs: [
+          { label: `Дэлхийн худалдаа, тариалангийн соёлын солилцоо`, options: [`Эерэг үр дагавар`, `Сөрөг үр дагавар`], answer: 0 },
+          { label: `Уугуул иргэдийг боолчлох, соёл устах`, options: [`Эерэг үр дагавар`, `Сөрөг үр дагавар`], answer: 1 },
+          { label: `Дэлхийн далай, тивийн зургийг нарийвчлах`, options: [`Эерэг үр дагавар`, `Сөрөг үр дагавар`], answer: 0 }
+        ]
+      }
+    ],
+    togol: {
+      title: `Аяллын замналын өргөрөг ба Колоничлолын баримт шинжилгээ`,
+      desc: `Колумб ба Магелланы аяллын үзүүлэлтийг тооцоолж, нийгмийн үр дагаврыг харьцуулан бичнэ үү.`,
+      calc: {
+        prompt: `Х.Колумб 1492 онд, Ф.Магеллан 1519 онд аяллаа эхлүүлсэн бол эдгээр хоёр аяллын хоорондох хугацааны зөрүү хэдэн жил вэ?`,
+        unit: `жил`,
+        expected: 27,
+        tolerance: 0,
+        hint: `1519 - 1492 = 27 жил.`
+      },
+      tablePrompt: `Дараах харьцуулсан хүснэгтийг түүх болон газар зүйн өнцгөөс гүйцээнэ үү.`,
+      tableCols: [`Шалгуур`, `Европын гүрнүүд (Испани, Португал)`, `Колоничлогдсон уугуул иргэд / Монгол Улс (Харьцуулалт)`],
+      tableRows: [
+        `Далайд гарцтай эсвэл гарцгүй байдлын нөлөө`,
+        `Эдийн засаг ба худалдааны үр дүн`,
+        `Хүний жам ёсны эрхийн хэрэгжилт`
+      ]
+    },
+    orgil: {
+      title: `Хүний эрхийн үнэлэмж ба Өнөөгийн даяаршил`,
+      prompt: `Колоничлолын үед уугуул иргэдийн газар нутгийг эзэлж боолчилж байсан нь хүний жам ёсны ямар эрхүүдийг зөрчсөн бэ? Монгол Улсын Үндсэн хуулийн 2-р бүлгийн заалттай харьцуулан, «Хэрэв газар зүйн их нээлт болоогүй бол дэлхий ямар байх байсан бэ?» асуудлаар 4–5 өгүүлбэртэй дүгнэлт бичнэ үү.`,
+      rubric: [
+        `Хүний амьд явах, эрх чөлөөтэй байх, өмчтэй байх жам ёсны эрхийг дурдсан`,
+        `Монгол Улсын Үндсэн хуулийн 2-р бүлгийн үзэл санаатай харьцуулсан`,
+        `Газар зүйн их нээлтийн дэлхий дахинд үзүүлсэн урт хугацааны нөлөөг шүүн тунгаасан`
+      ]
+    }
+  },
+  {
+    id: 4,
+    code: `04`,
+    title: `Шинжлэх ухааны нээлтүүд ба Цаг хугацаа, орон зайн хэмжилт`,
+    subjects: [
+      { name: `Газар зүй`, pct: 60 },
+      { name: `Түүх`, pct: 40 }
+    ],
+    objectives: `Г38.2а, Г38.2б · Түүх 8.3ж`,
+    kb: {
+      concepts: [
+        `Дэлхий тэнхлэгээ 24 цагт 360° эргэдэг тул 1 цагт 15° уртраг эргэнэ (1° уртраг = 4 минут). Дэлхийг 24 цагийн бүсэд хуваадаг.`,
+        `Зүүн тийш шилжих бүрд цаг нэмэгдэж (+), баруун тийш шилжих бүрд цаг хасагдана (-).`
+      ],
+      facts: [
+        `Жишиг цагийн бүс: Лондон (0-р бүс, UTC+0), Улаанбаатар (+8-р бүс, UTC+8), Токио (+9-р бүс, UTC+9).`,
+        `«Газар зүй VIII»: Монгол орон хойд өргөргийн 42°–52° хооронд сэрүүн бүсэд оршдог. Нарны нийлмэл цацрагийн жилийн дундаж 900–1500 кВ/м² байна.`
+      ],
+      history: [
+        `Түүх VIII (8.3ж): Шинэ үеийн шинжлэх ухааны хувьсгал — Николай Коперник (дэлхий нарыг тойрдог), Галилео Галилей (дуран авай, одон орны ажиглалт), Исаак Ньютон (бүх ертөнцийн таталцлын хууль).`,
+        `XVIII зуунд далайчид уртрагийг нарийн олохын тулд далайн хронометр (цаг) зохион бүтээсэн нь цаг хугацаа ба орон зайг холбосон том ололт болсон.`
+      ]
+    },
+    bulag: [
+      {
+        id: `t4_b1`,
+        type: `mcq`,
+        question: `1. Дэлхий тэнхлэгээ 1 цагт хэдэн градус уртраг эргэдэг вэ?`,
+        options: [
+          `10 градус`,
+          `15 градус`,
+          `24 градус`,
+          `30 градус`
+        ],
+        answer: 1,
+        explain: `360° / 24 цаг = 15° буюу 1 цагийн бүс нь 15° уртрагийн өргөнтэй.`
+      },
+      {
+        id: `t4_b2`,
+        type: `mcq`,
+        question: `2. Нарыг төвд нь үздэг гелиоцентрик тогтолцоог анх шинжлэх ухааны үндэслэлтэй дэвшүүлсэн эрдэмтэн хэн бэ?`,
+        options: [
+          `Исаак Ньютон`,
+          `Николай Коперник`,
+          `Фернан Магеллан`,
+          `I Петр`
+        ],
+        answer: 1,
+        explain: `Польшийн одон оронч Николай Коперник Дэлхий болон гарагууд Нарыг тойрдог болохыг нотолсон.`
+      },
+      {
+        id: `t4_b3`,
+        type: `match`,
+        question: `3. Хот ба цагийн бүсийн тэмдэглэгээг зөв тохируулна уу.`,
+        pairs: [
+          { label: `Лондон`, options: [`0-р бүс (UTC+0)`, `+8-р бүс (UTC+8)`, `+9-р бүс (UTC+9)`], answer: 0 },
+          { label: `Улаанбаатар`, options: [`0-р бүс (UTC+0)`, `+8-р бүс (UTC+8)`, `+9-р бүс (UTC+9)`], answer: 1 },
+          { label: `Токио`, options: [`0-р бүс (UTC+0)`, `+8-р бүс (UTC+8)`, `+9-р бүс (UTC+9)`], answer: 2 }
+        ]
+      }
+    ],
+    togol: {
+      title: `Дэлхийн цагийн бүсийн тооцоолуур ба даалгавар`,
+      desc: `Улаанбаатар (+8-р бүс)-д өдрийн 14:00 цаг болж байхад Лондон (0-р бүс) болон Токио (+9-р бүс)-д хэдэн цаг болохыг тооцоолно уу.`,
+      calc: {
+        prompt: `Улаанбаатар (+8-р бүс)-д 14:00 цаг болж байвал Лондон (0-р бүс)-д өглөөний хэдэн цаг болж байх вэ? (Зөвхөн бүхэл цагийн тоог бичнэ үү)`,
+        unit: `:00 цаг`,
+        expected: 6,
+        tolerance: 0,
+        hint: `Тооцоо: 14 - 8 = 06:00 цаг. Харин Токиод (+9) 14 + 1 = 15:00 цаг болно.`
+      },
+      tablePrompt: `Шинэ үеийн 3 эрдэмтний нээлт далайн аялал болон дэлхийг үзэх үзэлд хэрхэн нөлөөлснийг нөхөж бичнэ үү.`,
+      tableCols: [`Эрдэмтэн`, `Гол нээлт`, `Хүмүүсийн үзэл ба далайн аялалд үзүүлсэн нөлөө`],
+      tableRows: [
+        `Николай Коперник`,
+        `Галилео Галилей`,
+        `Исаак Ньютон`
+      ]
+    },
+    orgil: {
+      title: `Цагийн бүсийн амьдрал ахуйн хэрэглээ`,
+      prompt: `Уртрагийн зөрүү яагаад цагийн ялгаа үүсгэдэг шалтгааныг тайлбарлаж, олон улсын нислэг хийх эсвэл гадаад улстай цахим хурал товлох үед цагийн бүсийг мэдэхгүй байх нь ямар бодит хүндрэл учруулахыг жишээгээр (Токио, Лондон, Улаанбаатар хотуудын цагаар) баталж бичнэ үү.`,
+      rubric: [
+        `Дэлхийн тэнхлэгээ эргэх хөдөлгөөн ба 15°-ын зөрүүг зөв тайлбарласан`,
+        `Токио (+9) ба Лондон (0) хотуудын цагийн тооцооллыг жишээнд зөв ашигласан`,
+        `Олон улсын нислэг эсвэл цахим хурлын бодит эрсдэл, шийдлийг гаргасан`
+      ]
+    }
+  },
+  {
+    id: 5,
+    code: `05`,
+    title: `Байгаль хамгаалах уламжлалт зан үйл ба Асрахуй сэтгэл`,
+    subjects: [
+      { name: `ИЁЗБ`, pct: 50 },
+      { name: `Газар зүй`, pct: 30 },
+      { name: `Нийгэм судлал`, pct: 20 }
+    ],
+    objectives: `ИЁЗБ 2.1.1, 2.1.2 · Г38.5б · Нийгэм 8.2а`,
+    kb: {
+      concepts: [
+        `Монголчуудын байгаль хамгаалах уламжлал: Уул усаа хүндэтгэн «Хайрхан», «Хан уул», «Баян уул», «Рашаан» хэмээн эрхэмлэн нэрлэж, эзэн савдагтай хэмээн цээр сахидаг.`,
+        `Асрахуй ба энэрэхүй сэтгэл (ИЁЗБ 2.1): Бүх амьд амьтан амар амгаланг олоосой, зовлонгоос хагацаасай гэсэн энэрэн хайрлах сэтгэлийг өдөр тутмын зан үйлдээ шингээх.`
+      ],
+      facts: [
+        `«Газар зүй VIII» (Бүлэг 5): Төрийн тахилгатай уулс — Хэнтийхан (Бурханхалдун), Богдхан, Отгонтэнгэр, Дарьгангын Алтан-Овоо, Ховдын Алтан Хөхий, Архангайн Суврага хайрхан.`,
+        `Уламжлалт цээр ёс: Нүүхдээ гэрийн буурь, хог хаягдлыг бүрэн цэвэрлэх; овоонд чулуу нэмэх; гол горхи, булаг шандад сүү, цус оруулахыг цээрлэх; 4 улирлаар сэлгэн бэлчээрлэх.`
+      ],
+      history: [
+        `Орчин үеийн хамгаалал: Улсын тусгай хамгаалалттай газар нутаг (Дархан цаазат газар, Байгалийн цогцолборт газар, Байгалийн нөөц газар, Дурсгалт газар) байгуулж экосистемийг хамгаалдаг.`
+      ]
+    },
+    bulag: [
+      {
+        id: `t5_b1`,
+        type: `mcq`,
+        question: `1. Дараах уулсаас аль нь «Газар зүй VIII» сурах бичигт дурдсан Төрийн тахилгатай ууланд БАГТДАГ вэ?`,
+        options: [
+          `Алтай Таван Богд ба Жаргалант`,
+          `Отгонтэнгэр, Бурханхалдун, Суврага хайрхан`,
+          `Хорго Тэрхийн цагаан нуур`,
+          `Мэнэнгийн тал`
+        ],
+        answer: 1,
+        explain: `Төрийн тахилгатай уулсад Хэнтийхан (Бурханхалдун), Богдхан, Отгонтэнгэр, Алтан-Овоо, Алтан Хөхий, Суврага хайрхан ордог.`
+      },
+      {
+        id: `t5_b2`,
+        type: `mcq`,
+        question: `2. Монголчууд гол горхи, булаг шандад «улаан, цагаан юм (цус, сүү)» оруулахыг цээрлэдэг уламжлалын экологийн учир юу вэ?`,
+        options: [
+          `Усыг бохирдуулахгүй, цэнгэг хэвээр хадгалах`,
+          `Зөвхөн усан онгоц явуулахын тулд`,
+          `Загас барихад хялбар болгох`,
+          `Усны унал ихэсгэх`
+        ],
+        answer: 0,
+        explain: `Усанд сүү, цус болон бохир зүйл оруулахгүй байх нь ундны усны эх, экосистемийг цэвэр ариун байлгах уламжлалт ухаан юм.`
+      },
+      {
+        id: `t5_b3`,
+        type: `match`,
+        question: `3. Төрийн тахилгатай уулыг орших аймаг/бүстэй нь тохируулна уу.`,
+        pairs: [
+          { label: `Алтан-Овоо`, options: [`Сүхбаатар`, `Ховд`, `Архангай`], answer: 0 },
+          { label: `Алтан Хөхий`, options: [`Сүхбаатар`, `Ховд`, `Архангай`], answer: 1 },
+          { label: `Суврага хайрхан`, options: [`Сүхбаатар`, `Ховд`, `Архангай`], answer: 2 }
+        ]
+      }
+    ],
+    togol: {
+      title: `Уламжлалт цээр ёс ба Тусгай хамгаалалттай газар нутаг`,
+      desc: `Төрийн тахилгатай уулсын тоо ба өөрийн бүс нутгийн ТХГН, уламжлалт домгийн үүргийг шинжилнэ үү.`,
+      calc: {
+        prompt: `«Газар зүй VIII» сурах бичгийн 5-р бүлэгт нэрлэсэн Төрийн тахилгатай уул нийт хэдэн уул байгааг тоолоод тоогоор бичнэ үү.`,
+        unit: `уул`,
+        expected: 6,
+        tolerance: 0,
+        hint: `Хэнтийхан, Богдхан, Отгонтэнгэр, Алтан-Овоо, Алтан Хөхий, Суврага хайрхан = 6 уул.`
+      },
+      tablePrompt: `Орон нутгийнхаа уламжлалт зан үйл болон Тусгай хамгаалалттай газар нутгийн талаар бөглөнө үү.`,
+      tableCols: [`Хамгааллын хэлбэр`, `Нутгийн жишээ / Домог, зан үйл`, `Экосистемд гүйцэтгэх үүрэг`],
+      tableRows: [
+        `Ус, булаг шанд хамгаалах цээр ёс`,
+        `Улирлын бэлчээр сэлгэх нүүдэл (Өвөлжөө–Зуслан)`,
+        `Аймгийн/Бүсийн Тусгай хамгаалалттай газар нутаг`
+      ]
+    },
+    orgil: {
+      title: `Асрахуй, энэрэхүй сэтгэлийн 3 сайн дадал`,
+      prompt: `«Хүн, амьтан бүгд амар амгаланг олоосой, зовлонгоосоо хагацаасай» гэсэн асрахуй, энэрэхүй сэтгэлийг өдөр тутмын амьдралдаа байгаль дэлхий, ан амьтан, гэрийн тэжээвэр амьтад, ус ургамалд хандах хандлагаараа хэрхэн хэрэгжүүлэх вэ? Өөртөө мөрдөх 3 бодит дадал төлөвлөж, гэр бүл ахмадуудаас сонссон уламжлалтай холбон бичнэ үү.`,
+      rubric: [
+        `Ахмадуудын уламжлалт мэдлэг эсвэл орон нутгийн домгийг дурдсан`,
+        `Асрахуй, энэрэхүй сэтгэлийн утга учрыг байгаль хамгаалалтай холбосон`,
+        `Өдөр тутам хэрэгжүүлэх 3 бодит сайн дадал тодорхойлсон`
+      ]
+    }
+  },
+  {
+    id: 6,
+    code: `06`,
+    title: `Орон нутгийн аж ахуй, нөөц баялаг ба Эдийн засгийн хөгжил`,
+    subjects: [
+      { name: `Нийгэм судлал`, pct: 40 },
+      { name: `Газар зүй`, pct: 30 },
+      { name: `Түүх`, pct: 30 }
+    ],
+    objectives: `Нийгэм 8.3а, 8.3б, 8.3в · Г38.4а, Г38.4г · Түүх 8.3б, 8.3о`,
+    kb: {
+      concepts: [
+        `Аж ахуйн бүсийн ялгаа («Газар зүй VIII»): Хойд ойт хээрийн бүсэд (Хөвсгөл Мөрөн, Сэлэнгэ) чийг ахиу тул газар тариалан, эрчимжсэн мал аж ахуйд таатай; Зүүн тал хээрт уудам бэлчээр дагасан мал аж ахуй; Өмнөд говьд (Даланзадгад) уул уурхай, говийн тэмээ/ямааны аж ахуй давамгайлна.`,
+        `Эдийн засгийн үндсэн томьёо: Цэвэр ашиг = Нийт орлого - Нийт зардал.`
+      ],
+      facts: [
+        `Гадаргын өндөр: Манай орны нутгийн 80% нь д.т.д. 1000 м-ээс дээш оршино. Хамгийн нам цэг нь Дорнод аймгийн Хөх нуур (д.т.д. 560 м).`,
+        `Томоохон голуудын эх ба адаг: Орхон (эх 3021 м → адаг 601 м), Хэрлэн (2393 м → 539 м), Туул (1850 м → 780 м).`
+      ],
+      history: [
+        `Түүх VIII: XVI зуунаас Англид мануфактурууд байгуулагдаж хөдөлмөрийн хуваарь нэвтэрснээр зүүний цех өдөрт 20 зүүнээс 1800 зүү үйлдвэрлэх болж бүтээмж 90 дахин өссөн.`,
+        `XVIII–XX зууны эхэн үед Халхад Хятадын худалдааны капитал (пүүсүүд) нэвтэрч, үндэсний бие даасан үйлдвэрлэл хөгжөөгүйгээс түүхий эд хямд гарч, ард иргэд өрөнд орсон түүхэн сургамж бий.`
+      ]
+    },
+    bulag: [
+      {
+        id: `t6_b1`,
+        type: `mcq`,
+        question: `1. Монгол орны нутаг дэвсгэрийн ойролцоогоор хэдэн хувь нь далайн түвшнээс дээш 1000 метрээс өндөрт оршдог вэ?`,
+        options: [
+          `30 хувь`,
+          `50 хувь`,
+          `80 хувь`,
+          `95 хувь`
+        ],
+        answer: 2,
+        explain: `«Газар зүй VIII» сурах бичигт Монгол орны нутгийн 80% нь д.т.д. 1000 м-ээс дээш оршино гэж заасан.`
+      },
+      {
+        id: `t6_b2`,
+        type: `mcq`,
+        question: `2. Мануфактурын хөдөлмөрийн хуваарь нэвтэрснээр Английн зүүний цехийн өдрийн үйлдвэрлэл 20 зүүнээс хэд болж өссөн бэ? («Түүх VIII»)`,
+        options: [
+          `200 зүү`,
+          `500 зүү`,
+          `1800 зүү`,
+          `3600 зүү`
+        ],
+        answer: 2,
+        explain: `Хөдөлмөрийн нарийн хуваарийн ачаар зүүний цех өдөрт 20 зүүнээс 1800 зүү үйлдвэрлэдэг болсон.`
+      },
+      {
+        id: `t6_b3`,
+        type: `match`,
+        question: `3. Газар зүйн бүсийг тохиромжтой аж ахуйн чиглэлтэй нь холбоорой.`,
+        pairs: [
+          { label: `Хойд ойт хээр (Сэлэнгэ, Хөвсгөл)`, options: [`Газар тариалан, ойн аж ахуй`, `Тэмээний аж ахуй, говийн уул уурхай`, `Зөвхөн загасчлал`], answer: 0 },
+          { label: `Өмнөд говийн бүс (Өмнөговь)`, options: [`Газар тариалан`, `Говийн мал аж ахуй, эрдэс баялаг, аялал жуулчлал`, `Үр тарианы гол бүс`], answer: 1 }
+        ]
+      }
+    ],
+    togol: {
+      title: `Орхон голын унал ба Жижиг бизнесийн ашгийн тооцоолуур`,
+      desc: `Газар зүйн морфометрийн тооцоолол (Голын унал = Эх - Адаг) болон орон нутгийн үйлдвэрлэлийн эдийн засгийн үнэлгээг хийнэ үү.`,
+      calc: {
+        prompt: `Хүснэгт 4.3-аас: Орхон голын эх д.т.д. 3021 м, адаг д.т.д. 601 м бол Орхон голын нийт унал (өндрийн зөрүү) хэдэн метр болох вэ?`,
+        unit: `метр`,
+        expected: 2420,
+        tolerance: 0,
+        hint: `Тооцоо: 3021 - 601 = 2420 метр.`
+      },
+      tablePrompt: `Орон нутгийнхаа газрын гадарга, уур амьсгал, түүхий эдэд тулгуурлан жижиг бизнесийн санаагаа тооцоолно уу.`,
+      tableCols: [`Төслийн бүрэлдэхүүн`, `Жишээ (Ноолууран бүтээгдэхүүн / Сүүн бүтээгдэхүүн)`, `Танай орон нутгийн сонгосон төсөл`],
+      tableRows: [
+        `Түүхий эд ба газар зүйн давуу тал`,
+        `Сарын нийт зардал ба орлогын тооцоо (төгрөгөөр)`,
+        `Гол эрсдэл ба даван туулах шийдэл`
+      ]
+    },
+    orgil: {
+      title: `Хятадын худалдааны капиталын түүхэн сургамж ба Үндэсний үйлдвэрлэл`,
+      prompt: `XVIII–XX зууны эхэн үед Халхад гадаадын худалдааны капитал ноёрхож байсан түүхэн баримтыг өнөөгийн зах зээлийн эдийн засагтай харьцуулан, түүхий эдээ боловсруулалгүй хямд гаргахаас илүү орон нутагтаа бие даасан нэмүү өртөг шингэсэн үйлдвэрлэл эрхлэхийн эдийн засгийн ач холбогдлыг үндэслэлтэй бичнэ үү.`,
+      rubric: [
+        `XVIII–XX зууны Хятадын худалдааны капиталын үр дагаврыг дурдсан`,
+        `Түүхий эд ба боловсруулсан бүтээгдэхүүний ялгааг эдийн засгийн үүднээс тайлбарласан`,
+        `Өөрийн орон нутгийн нөөцөд тохирсон бодит үйлдвэрлэлийн санал дэвшүүлсэн`
+      ]
+    }
+  },
+  {
+    id: 7,
+    code: `07`,
+    title: `Нийгмийн зөрчил, түүхэн сургамж ба Сэтгэл хөдлөлөө удирдах ухаан`,
+    subjects: [
+      { name: `ИЁЗБ`, pct: 40 },
+      { name: `Нийгэм судлал`, pct: 30 },
+      { name: `Түүх`, pct: 30 }
+    ],
+    objectives: `ИЁЗБ 1.1.1, 1.1.2 · Нийгэм 8.1в · Түүх 8.2а, 8.3б`,
+    kb: {
+      concepts: [
+        `Уужуу ухаан ба сэтгэл хөдлөлөө удирдах (ИЁЗБ 1.1): Уур хилэн нь бодлогогүй үйлдэлд хүргэдэг бол үг даах, бэрхшээлийг тунгаах, уурыг тэвчих нь зөрчлийг эергээр шийдэх түлхүүр юм.`,
+        `Зөрчлийг шийдвэрлэх арга зам (Нийгэм 8.1в): Сөргөлдөх бус, харилцан сонсох, буулт хийх, хамтран ажиллах (win-win).`
+      ],
+      facts: [
+        `Эв эеийг эрхэмлэх монгол ухаан: «Эвт шаазгай буга барина», «Ахас ихсээ хүндэлж, дүү нараа асрах» уламжлал нь гэр бүл, хамт олны тогтвортой байдлыг хангадаг.`
+      ],
+      history: [
+        `Түүх VIII (8.2а, 8.3б): XV–XVII зуунд Монголын алтан ургийн болон Ойрадын ноёд эрх мэдэл, газар нутгийн төлөө хоорондоо тэмцэлдэж эв эе алдарсан.`,
+        `Үр дагавар: Манж Чин улсын бодлогыг сөрж чадалгүй 1636 онд Өвөр Монгол, 1691 онд Халх Монгол, 1755–1758 онд Ойрад тусгаар тогтнолоо алдаж Манжийн эрхшээлд орсон.`
+      ]
+    },
+    bulag: [
+      {
+        id: `t7_b1`,
+        type: `mcq`,
+        question: `1. XV–XVII зуунд Монгол Улс Манжийн эрхшээлд ороход хүргэсэн хамгийн гол дотоод шалтгаан юу байсан бэ?`,
+        options: [
+          `Далайн худалдаа хөгжөөгүй`,
+          `Ноёд, язгууртнуудын дотоодын зөрчил, эв эе алдарсан явдал`,
+          `Цаг агаар хэт дулаарсан`,
+          `Төмрийн орд олдоогүй`
+        ],
+        answer: 1,
+        explain: `Түүхэн сургамжаас үзэхэд Халх, Өвөр, Ойрадын ноёдын дотоодын зөрчил эв эеийг эвдэж, гадны гүрэнд олзлогдох нөхцөлийг бүрдүүлсэн.`
+      },
+      {
+        id: `t7_b2`,
+        type: `mcq`,
+        question: `2. Анги хамт олны дунд үл ойлголцол, зөрчил үүсэхэд ИЁЗБ-ын хичээлд үзсэнээр хамгийн зөв эхний алхам аль нь вэ?`,
+        options: [
+          `Уурлаж хашхирах эсвэл бусдыг буруутгах`,
+          `Шууд тасарч явах`,
+          `Уураа тэвчиж, нөхцөл байдлыг уужуу ухаанаар тунгаан бодох`,
+          `Бүлэглэн хуваагдах`
+        ],
+        answer: 2,
+        explain: `Уурыг тэвчиж, асуудлын шалтгааныг тунгааснаар зөв шийдэлд хүрэх боломж бүрдэнэ.`
+      },
+      {
+        id: `t7_b3`,
+        type: `match`,
+        question: `3. Манжийн эрхшээлд орсон түүхэн он цагийг бүс нутагтай нь холбоорой.`,
+        pairs: [
+          { label: `Өвөр Монгол`, options: [`1636 он`, `1691 он`, `1755–1758 он`], answer: 0 },
+          { label: `Халх Монгол`, options: [`1636 он`, `1691 он`, `1755–1758 он`], answer: 1 },
+          { label: `Зүүнгар (Ойрад)`, options: [`1636 он`, `1691 он`, `1755–1758 он`], answer: 2 }
+        ]
+      }
+    ],
+    togol: {
+      title: `Түүхэн хугацааны тооцоолол ба Зөрчил шийдвэрлэх кейс`,
+      desc: `Монголчууд хэсэгчлэн Манжийн эрхшээлд орсон цаг хугацааны зайг тооцоолж, өнөөгийн зөрчлийн жишээтэй холбоно уу.`,
+      calc: {
+        prompt: `1636 онд Өвөр Монгол, 1691 онд Халх Монгол Манжид дагаар орсон бол энэ хоёр үйл явдлын хооронд хэдэн жил өнгөрсөн бэ?`,
+        unit: `жил`,
+        expected: 55,
+        tolerance: 0,
+        hint: `Тооцоо: 1691 - 1636 = 55 жил. (Харин 1755 он хүртэл нийт 119 жил үргэлжилсэн!)`
+      },
+      tablePrompt: `Анги хамт олон эсвэл найз нөхдийн дунд гардаг 3 зөрчлийг уужуу ухаанаар шийдвэрлэх төлөвлөгөө гаргана уу.`,
+      tableCols: [`Зөрчлийн тохиолдол`, `Түргэн уурлавал гарах сөрөг үр дагавар`, `Уужуу ухаан, үг даах замаар шийдэх алхам`],
+      tableRows: [
+        `Багийн ажил дээр санал зөрөлдөх`,
+        `Цахим орчинд буруу ойлголцол үүсэх`,
+        `Найзын хатуу шүүмжлэл, гомдол`
+      ]
+    },
+    orgil: {
+      title: `Түүхэн сургамжаас «Эв эеийн тунхаг» бүтээх`,
+      prompt: `XV–XVII зуунд Монголын ноёдын эв эе алдарснаас тусгаар тогтнолоо алдсан түүхэн сургамжийг өнөөгийн залуучууд, хамт олны харилцаатай холбон эргэцүүлж, өөрийн сэтгэл хөдлөлийг удирдах болон хамт олны эв нэгдлийг сахих 3 зарчим бүхий эсээ бичнэ үү.`,
+      rubric: [
+        `Түүхэн зөрчлийн үр дагаврыг баримтаар тайлбарласан`,
+        `Сэтгэл хөдлөлөө удирдах ба нийгмийн зөрчлийн уялдааг гаргасан`,
+        `Хамт олонд мөрдөх бодит 3 зарчим дэвшүүлсэн`
+      ]
+    }
+  },
+  {
+    id: 8,
+    code: `08`,
+    title: `Монгол дахь Бурхны шашны дэлгэрэлт ба Оюун санааны соёл`,
+    subjects: [
+      { name: `Түүх`, pct: 50 },
+      { name: `ИЁЗБ`, pct: 30 },
+      { name: `Газар зүй`, pct: 20 }
+    ],
+    objectives: `Түүх 8.3в · ИЁЗБ 1.2 · Г38.1в`,
+    kb: {
+      concepts: [
+        `XVI зууны сүүлчээс Монголд бурхны шашин (шарын урсгал) өргөн дэлгэрч, ном судар хэвлэх, гүн ухаан, анагаах ухаан, уран барилга, дүрслэх урлаг хөгжсөн.`,
+        `Сэтгэлээ тогтоох ба тархи судлал (ИЁЗБ 1.2): Стрессийн үед хүний тархинд ялгардаг кортизол даавар анхаарал, ой тогтоолтыг бууруулдаг. Харин амьсгал дээр төвлөрөх дасгал (бясалгал) нь кортизолыг багасгаж сэтгэлийг тайвшруулдаг.`
+      ],
+      facts: [
+        `Түүхэн гол хийдүүдийн газар зүйн байршил: Эрдэнэзуу (Өвөрхангай аймаг, Хархорин — Орхоны хөндий), Амарбаясгалант (Сэлэнгэ аймаг, Баруунбүрэн — Ивэн голын хөндий), Гандантэгчилэн (Улаанбаатар хот — Туул голын хөндий).`,
+        `Анхаарал төвлөрүүлэх энгийн дасгал: 2 минут буюу 120 секунд нуруу цэх сууж, 4 секунд амьсгал аван, 4 секунд бариад, 4 секунд аажуу гаргана.`
+      ],
+      history: [
+        `1578 он: Түмэдийн Алтан хан III Далай лам Содномжамцтай уулзсан. 1586 он: Абтай сайн хан Эрдэнэзуу хийдийг байгуулсан.`,
+        `XVII зуун: Анхдугаар богд Өндөр гэгээн Занабазар соёмбо үсэг зохиож, уран баримал, соёлыг хөгжүүлсэн. 1727–1736 онд Амарбаясгалант хийдийг барьсан.`
+      ]
+    },
+    bulag: [
+      {
+        id: `t8_b1`,
+        type: `mcq`,
+        question: `1. 1586 онд Абтай сайн ханы байгуулсан Монголын анхны томоохон суурин хийд аль вэ?`,
+        options: [
+          `Амарбаясгалант хийд`,
+          `Эрдэнэзуу хийд`,
+          `Гандантэгчилэн хийд`,
+          `Хамрын хийд`
+        ],
+        answer: 1,
+        explain: `1586 онд Абтай сайн хан эртний Хархорум хотын туурин дээр Эрдэнэзуу хийдийг байгуулсан.`
+      },
+      {
+        id: `t8_b2`,
+        type: `mcq`,
+        question: `2. Стрессийн үед ялгарч суралцах чадвар, ой тогтоолтод сөргөөр нөлөөлдөг даавар аль нь вэ?`,
+        options: [
+          `Кортизол`,
+          `Хлорофилл`,
+          `Озон`,
+          `Гемоглобин`
+        ],
+        answer: 0,
+        explain: `Кортизол нь стрессийн үед ялгардаг даавар бөгөөд анхаарал төвлөрүүлэх дасгал хийснээр түвшин нь буурдаг.`
+      },
+      {
+        id: `t8_b3`,
+        type: `match`,
+        question: `3. Түүхэн хийдүүдийг орших аймаг/байршилтай нь зөв тохируулаарай.`,
+        pairs: [
+          { label: `Эрдэнэзуу хийд`, options: [`Өвөрхангай (Хархорин)`, `Сэлэнгэ (Баруунбүрэн)`, `Улаанбаатар`], answer: 0 },
+          { label: `Амарбаясгалант хийд`, options: [`Өвөрхангай (Хархорин)`, `Сэлэнгэ (Баруунбүрэн)`, `Улаанбаатар`], answer: 1 },
+          { label: `Гандантэгчилэн хийд`, options: [`Өвөрхангай (Хархорин)`, `Сэлэнгэ (Баруунбүрэн)`, `Улаанбаатар`], answer: 2 }
+        ]
+      }
+    ],
+    togol: {
+      title: `2 минутын анхаарал төвлөрүүлэх дадлага ба Түүх-газар зүйн шинжилгээ`,
+      desc: `Хийд байгуулагдсан түүхэн хугацааг тооцоолж, доорх таймерыг ашиглан 2 минутын амьсгалын анхаарал төвлөрүүлэх дасгалыг практикт туршина уу.`,
+      calc: {
+        prompt: `Эрдэнэзуу хийд 1586 онд байгуулагдсан бол 2026 оны байдлаар тус хийд байгуулагдсаны хэдэн жилийн ой тохиож байна вэ?`,
+        unit: `жил`,
+        expected: 440,
+        tolerance: 0,
+        hint: `Тооцоо: 2026 - 1586 = 440 жил.`
+      },
+      hasTimer: true,
+      tablePrompt: `Хийдүүдийн байршил болон тархины үйл ажиллагааны өөрчлөлтийг дүгнэж бичнэ үү.`,
+      tableCols: [`Судлах зүйл`, `Баримт ба байршлын онцлог`, `Соёл болон эрүүл мэндэд үзүүлсэн ач тус`],
+      tableRows: [
+        `Эрдэнэзуу ба Амарбаясгалант хийдийн байршил (гол мөрөн, хөндий)`,
+        `Кортизол даавар ба стрессийн нөлөө`,
+        `2 минутын амьсгалын дасгалын өмнөх ба дараах мэдрэмж`
+      ]
+    },
+    orgil: {
+      title: `Сэтгэлийн амар амгалан ба Монголын оюун санааны өв`,
+      prompt: `Дасгалын өмнөх ба дараах сэтгэл зүйн байдлаа харьцуулан 2–3 өгүүлбэрээр тэмдэглэж, XVII–XVIII зууны Монголын оюун санааны соёлын өв (уран барилга, бичиг үсэг, сэтгэлгээний уламжлал) өнөөгийн залуучуудын стрессээ тайлах, суралцах чадвараа хөгжүүлэхэд хэрхэн тусалж болохыг бичнэ үү.`,
+      rubric: [
+        `Дасгалын өмнөх ба дараах сэтгэл зүйн өөрчлөлтийг бодитоор харьцуулсан`,
+        `Кортизол болон шинжлэх ухааны үндэслэлийг зөв тайлбарласан`,
+        `Монголын оюун санааны түүхэн өвтэй уялдуулж дүгнэсэн`
+      ]
+    }
+  },
+  {
+    id: 9,
+    code: `09`,
+    title: `Хүн амын өсөлт, тархалт ба Гэр бүл, хамт олны үүрэг хариуцлага`,
+    subjects: [
+      { name: `Газар зүй`, pct: 50 },
+      { name: `Нийгэм судлал`, pct: 30 },
+      { name: `ИЁЗБ`, pct: 20 }
+    ],
+    objectives: `Г38.3а · Нийгэм 8.1а · ИЁЗБ 2.2`,
+    kb: {
+      concepts: [
+        `Хүн амын нягтшилын томьёо: Нягтшил = Хүн амын тоо / Газар нутгийн талбай (хүн/км²).`,
+        `Шилжилт хөдөлгөөн ба бүсийн ялгаа: Сургууль, эмнэлэг, ажлын байр, гэр бүлийн харилцаа нь хүн амын төвлөрөл болон өсөлтөд шууд нөлөөлнө.`
+      ],
+      facts: [
+        `Монгол Улс 1,564,116 км² нутаг дэвсгэртэй, ~3.5 сая хүн амтай тул улсын дундаж нягтшил ойролцоогоор 2.2 хүн/км² буюу дэлхийн хамгийн сийрэг суурьшилтай орны нэг.`,
+        `Жишээ өгөгдөл: Өмнөговь аймагт 1935–2015 онд хүн ам 33.9 мянгаас 60.5 мянга болж өссөн. Улаанбаатар хотод нийт хүн амын тал орчим хувь нь оршин суудгаас нягтшил хамгийн өндөр (300+ хүн/км²).`
+      ],
+      history: [
+        `ИЁЗБ (2.2): Хүн төрсөн цагаасаа эхлэн эцэг эх, ах дүү, багш, олон хүний ач тусаар өсөн торниж боловсордог тул ачийг ухаарах, хариулах нь хувь хүний ёс зүйн үүрэг юм.`
+      ]
+    },
+    bulag: [
+      {
+        id: `t9_b1`,
+        type: `mcq`,
+        question: `1. Хүн амын нягтшилыг тооцоолох зөв томьёо аль нь вэ?`,
+        options: [
+          `Хүн амын тоо × Газар нутгийн талбай`,
+          `Хүн амын тоо ÷ Газар нутгийн талбай (хүн/км²)`,
+          `Газар нутгийн талбай ÷ Хүн амын тоо`,
+          `Төрөлт + Нас баралт`
+        ],
+        answer: 1,
+        explain: `Хүн амын нягтшил нь 1 км² талбайд ногдох дундаж хүний тоо буюу Хүн амын тоо / Талбай (км²) томьёогоор олно.`
+      },
+      {
+        id: `t9_b2`,
+        type: `mcq`,
+        question: `2. Өмнөговь аймгийн хүн ам 1935–2015 оны хооронд 33.9 мянгаас хэдэн мянга болж өссөн бэ?`,
+        options: [
+          `45.0 мянга`,
+          `60.5 мянга`,
+          `120.0 мянга`,
+          `25.4 мянга`
+        ],
+        answer: 1,
+        explain: `Өмнөговь аймгийн хүн ам 1935 онд 33.9 мянга байснаас 2015 онд 60.5 мянга болж өссөн.`
+      },
+      {
+        id: `t9_b3`,
+        type: `match`,
+        question: `3. Хүн амын өсөлт, шилжилт хөдөлгөөнд нөлөөлөх хүчин зүйлсийг зөв ангилна уу.`,
+        pairs: [
+          { label: `Ажлын байр, их дээд сургууль, эмнэлгийн хүртээмж`, options: [`Нийгэм-эдийн засгийн хүчин зүйл`, `Цэвэр байгалийн хүчин зүйл`], answer: 0 },
+          { label: `Агаарын температур, усны нөөц, уулархаг гадарга`, options: [`Нийгэм-эдийн засгийн хүчин зүйл`, `Байгаль-газар зүйн хүчин зүйл`], answer: 1 }
+        ]
+      }
+    ],
+    togol: {
+      title: `Аймаг/Дүүргийн хүн амын нягтшилын интерактив тооцоолуур`,
+      desc: `Доорх жишиг өгөгдөл эсвэл өөрийн аймаг, дүүргийн мэдээллийг (1212.mn статистикийн дагуу) оруулж нягтшилыг тооцоод улсын дундажтай (2.2 хүн/км²) харьцуулна уу.`,
+      calc: {
+        prompt: `Жишиг даалгавар: Хэрэв нэг аймгийн хүн ам 100,000, газар нутгийн талбай нь 50,000 км² бол хүн амын нягтшил нь хэдэн хүн/км² болох вэ?`,
+        unit: `хүн/км²`,
+        expected: 2.0,
+        tolerance: 0.1,
+        hint: `Тооцоо: 100,000 / 50,000 = 2.0 хүн/км².`
+      },
+      hasDensityTool: true,
+      tablePrompt: `Шилжилт хөдөлгөөн ба гэр бүл, орон нутгийн байгууллагын нөлөөллийг бүдүүвч хүснэгтээр илэрхийлнэ үү.`,
+      tableCols: [`Нийгмийн бүлэг / Байгууллага`, `Хүн амын өсөлт, тогтвортой суурьшилд үзүүлэх нөлөө`, `Танай орон нутаг дахь бодит жишээ`],
+      tableRows: [
+        `Гэр бүл, төрөл садан`,
+        `Орон нутгийн сургууль, цэцэрлэг, эмнэлэг`,
+        `Орон нутгийн ажлын байр, дэд бүтэц`
+      ]
+    },
+    orgil: {
+      title: `Ачийг ухаарах ба хариулах 3 бодит үйлдлийн төлөвлөгөө`,
+      prompt: `Хүн төрсөн цагаасаа эхлэн эцэг эх, ах дүү, багш, нийгмийн олон хүний ач тусаар өсөн торнидог. Гэр бүл, орон нутгийнхаа өмнө хүлээх өөрийн үүрэг хариуцлагыг ухамсарлаж, эцэг эх, ахмадуудын ачийг хариулах чиглэлээр өнөөдөр болон энэ долоо хоногт хийж чадах 3 бодит үйлдлийг төлөвлөж бичнэ үү.`,
+      rubric: [
+        `Өөрийн орон нутгийн хүн амын нягтшилыг улсын дундажтай харьцуулж дүгнэсэн`,
+        `Гэр бүл, хамт олны өмнө хүлээх хувь хүний хариуцлагыг ухамсарласан`,
+        `Эцэг эх, ахмадуудын ачийг хариулах 3 бодит, хэмжигдэхүйц үйлдэл төлөвлөсөн`
+      ]
+    }
+  }
+];
+
+let appState = {
+  activeTopicId: 1,
+  levelFilter: `all`,
+  student: { name: ``, className: ``, region: `` },
+  topics: {}
+};
+
+let activeTimerInterval = null;
+let timerSecondsLeft = 120;
+let timerRunning = false;
+
+function getTopicState(id) {
+  if (!appState.topics[id]) {
+    appState.topics[id] = {
+      kbOpen: true,
+      kbRead: false,
+      bulagAnswers: {},
+      bulagChecked: false,
+      togolCalcInput: ``,
+      togolCalcChecked: false,
+      togolTable: {},
+      densityPop: `100000`,
+      densityArea: `50000`,
+      orgilText: ``,
+      orgilRubric: [false, false, false]
+    };
+  }
+  return appState.topics[id];
+}
+
+function computeTopicScores(topic) {
+  const ts = getTopicState(topic.id);
+
+  // Bulag: 6 pts (2 pts per question x 3 questions)
+  let bulagPts = 0;
+  topic.bulag.forEach((q) => {
+    if (q.type === `mcq`) {
+      if (ts.bulagAnswers[q.id] === q.answer) bulagPts += 2;
+    } else if (q.type === `match`) {
+      let allRight = true;
+      q.pairs.forEach((p, idx) => {
+        const key = `${q.id}_${idx}`;
+        if (ts.bulagAnswers[key] !== p.answer) allRight = false;
+      });
+      if (allRight) bulagPts += 2;
+    }
+  });
+  if (!ts.bulagChecked) bulagPts = 0;
+
+  // Togol: 7 pts (calc 3 pts + table 3 pts + kbRead 1 pt)
+  let togolPts = 0;
+  if (ts.kbRead) togolPts += 1;
+  if (ts.togolCalcChecked) {
+    const val = parseFloat(String(ts.togolCalcInput).replace(`,`, `.`));
+    if (!isNaN(val) && Math.abs(val - topic.togol.calc.expected) <= topic.togol.calc.tolerance) {
+      togolPts += 3;
+    }
+  }
+  let filledCells = 0;
+  topic.togol.tableRows.forEach((_, rIdx) => {
+    const v1 = (ts.togolTable[`r${rIdx}_c1`] || ``).trim();
+    const v2 = (ts.togolTable[`r${rIdx}_c2`] || ``).trim();
+    if (v1.length >= 4) filledCells += 1;
+    if (v2.length >= 4) filledCells += 1;
+  });
+  togolPts += Math.min(3, Math.floor(filledCells / 2));
+
+  // Orgil: 7 pts (text length >= 40 chars -> 4 pts + 1 pt per rubric check up to 3 pts)
+  let orgilPts = 0;
+  const txtLen = (ts.orgilText || ``).trim().length;
+  if (txtLen >= 60) orgilPts += 4;
+  else if (txtLen >= 20) orgilPts += 2;
+  (ts.orgilRubric || []).forEach((checked) => {
+    if (checked) orgilPts += 1;
+  });
+
+  const total = Math.min(20, bulagPts + togolPts + orgilPts);
+  return { bulagPts, togolPts, orgilPts, total };
+}
+
+function updateGlobalHeader() {
+  let grandTotal = 0;
+  let completedTopics = 0;
+  TOPICS.forEach((t) => {
+    const sc = computeTopicScores(t);
+    grandTotal += sc.total;
+    if (sc.total >= 12) completedTopics += 1;
+  });
+
+  const scoreEl = document.getElementById(`global-score`);
+  if (scoreEl) scoreEl.textContent = `${grandTotal} / 180`;
+
+  const progEl = document.getElementById(`global-progress`);
+  if (progEl) progEl.textContent = `${completedTopics} / 9`;
+
+  const barEl = document.getElementById(`global-progress-bar`);
+  if (barEl) barEl.style.width = `${Math.round((grandTotal / 180) * 100)}%`;
+
+  const indEl = document.getElementById(`active-topic-indicator`);
+  if (indEl) {
+    const activeT = TOPICS.find((x) => x.id === appState.activeTopicId);
+    indEl.textContent = activeT ? `Идэвхтэй: Сэдэв ${activeT.code}` : `Идэвхтэй`;
+  }
+}
+
+function renderTopicTabs() {
+  const container = document.getElementById(`topic-tabs`);
+  if (!container) return;
+
+  container.innerHTML = TOPICS.map((t) => {
+    const sc = computeTopicScores(t);
+    const isActive = t.id === appState.activeTopicId;
+    const isDone = sc.total >= 12;
+    return `<button type="button" class="topic-tab ${isActive ? `is-active` : ``} ${isDone ? `is-done` : ``}" onclick="selectTopic(${t.id})">
+      <div class="topic-tab-top">
+        <span class="index-num">СЭДЭВ ${t.code}</span>
+        <span class="topic-tab-score">${sc.total} / 20</span>
+      </div>
+      <div class="topic-tab-title">${escapeHtml(t.title)}</div>
+    </button>`;
+  }).join(``);
+}
+
+function renderWorkspaceBase() {
+  const root = document.getElementById(`workspace-root`);
+  if (!root) return;
+
+  const t = TOPICS.find((x) => x.id === appState.activeTopicId) || TOPICS[0];
+  const ts = getTopicState(t.id);
+  const sc = computeTopicScores(t);
+
+  const subjectBadgesHtml = t.subjects.map((s, idx) =>
+    `<span class="subject-chip ${idx === 0 ? `subject-chip--primary` : ``}">${escapeHtml(s.name)} ${s.pct}%</span>`
+  ).join(``);
+
+  const weightBarsHtml = t.subjects.map((s, idx) => {
+    const subjPts = ((sc.total * s.pct) / 100).toFixed(1);
+    const maxSubjPts = ((20 * s.pct) / 100).toFixed(1);
+    const colors = [`var(--data-1)`, `var(--data-2)`, `var(--data-3)`, `var(--data-4)`];
+    return `<div class="weight-bar-row">
+      <span><strong>${escapeHtml(s.name)}</strong> (${s.pct}%)</span>
+      <span class="index-num">${subjPts} / ${maxSubjPts}</span>
+      <div class="weight-track"><div class="weight-fill" style="width:${s.pct}%; background:${colors[idx % 4]}"></div></div>
+    </div>`;
+  }).join(``);
+
+  // Knowledge Base
+  const kbHtml = `<section class="kb-card" aria-label="Сурах бичгийн мэдлэгийн сан">
+    <button type="button" class="kb-toggle" onclick="toggleKb(${t.id})" aria-expanded="${ts.kbOpen ? `true` : `false`}">
+      <div class="kb-title-wrap">
+        <span class="dossier-pill">МЭДЛЭГИЙН САН</span>
+        <h3 class="kb-heading">Сурах бичгийн тулгуур ойлголт, он цаг, баримтууд</h3>
+      </div>
+      <span class="index-num">${ts.kbOpen ? `Хураах ▲` : `Дэлгэх ▼`}</span>
+    </button>
+    <div class="kb-body ${ts.kbOpen ? `` : `is-collapsed`}">
+      <div class="kb-columns">
+        <div class="kb-panel">
+          <h4>ТУЛГУУР ОЙЛГОЛТ</h4>
+          <ul class="kb-list">${t.kb.concepts.map((c) => `<li>${escapeHtml(c)}</li>`).join(``)}</ul>
+        </div>
+        <div class="kb-panel">
+          <h4>ТООН БАРИМТ БА ТОМЬЁО</h4>
+          <ul class="kb-list">${t.kb.facts.map((f) => `<li>${escapeHtml(f)}</li>`).join(``)}</ul>
+        </div>
+        <div class="kb-panel">
+          <h4>ТҮҮХЭН УЛБАА БА ЭХ СУРВАЛЖ</h4>
+          <ul class="kb-list">${t.kb.history.map((h) => `<li>${escapeHtml(h)}</li>`).join(``)}</ul>
+        </div>
+      </div>
+      <div class="kb-confirm-bar">
+        <span class="kb-source-note">Эх сурвалж: «Газар зүй VIII» ба «Түүх VIII» сурах бичиг (${escapeHtml(t.objectives)})</span>
+        <button type="button" class="btn ${ts.kbRead ? `btn-accent` : `btn-secondary`}" onclick="toggleKbRead(${t.id})">
+          ${ts.kbRead ? `✓ Уншиж танилцсан (+2 оноо)` : `Уншиж танилцлаа гэж тэмдэглэх (+2 оноо)`}
+        </button>
+      </div>
+    </div>
+  </section>`;
+
+  // Level Filter Bar
+  const fl = appState.levelFilter;
+  const filterHtml = `<div class="level-filter-bar">
+    <div class="level-pills" role="tablist" aria-label="Түвшний шүүлтүүр">
+      <button type="button" class="level-pill ${fl === `all` ? `is-active` : ``}" onclick="setLevelFilter('all')">Бүх түвшин (20 оноо)</button>
+      <button type="button" class="level-pill ${fl === `bulag` ? `is-active` : ``}" onclick="setLevelFilter('bulag')">1. Булаг · Анхан (6 оноо)</button>
+      <button type="button" class="level-pill ${fl === `togol` ? `is-active` : ``}" onclick="setLevelFilter('togol')">2. Төгөл · Дунд (7 оноо)</button>
+      <button type="button" class="level-pill ${fl === `orgil` ? `is-active` : ``}" onclick="setLevelFilter('orgil')">3. Оргил · Ахисан (7 оноо)</button>
+    </div>
+    <span class="index-num">Сэдвийн нийт оноо: ${sc.total} / 20</span>
+  </div>`;
+
+  // Tier 1: Bulag
+  const bulagTasksHtml = t.bulag.map((q) => {
+    if (q.type === `mcq`) {
+      const selected = ts.bulagAnswers[q.id];
+      const optsHtml = q.options.map((opt, idx) => {
+        let cls = `mcq-option`;
+        if (selected === idx) cls += ` is-selected`;
+        if (ts.bulagChecked) {
+          if (idx === q.answer) cls += ` is-correct`;
+          else if (selected === idx && selected !== q.answer) cls += ` is-wrong`;
+        }
+        return `<label class="${cls}">
+          <input type="radio" name="${q.id}" value="${idx}" ${selected === idx ? `checked` : ``} onchange="selectMcq(${t.id}, '${q.id}', ${idx})">
+          <span>${escapeHtml(opt)}</span>
+        </label>`;
+      }).join(``);
+      let fbHtml = ``;
+      if (ts.bulagChecked) {
+        const isRight = selected === q.answer;
+        fbHtml = `<div class="feedback-line ${isRight ? `feedback-line--ok` : `feedback-line--err`}">
+          ${isRight ? `Зөв (+3 оноо): ` : `Анхаар (0 оноо): `}${escapeHtml(q.explain)}
+        </div>`;
+      }
+      return `<div class="task-block">
+        <p class="task-question">${escapeHtml(q.question)}</p>
+        <div class="mcq-options">${optsHtml}</div>
+        ${fbHtml}
+      </div>`;
+    } else if (q.type === `match`) {
+      let allMatchRight = true;
+      const rowsHtml = q.pairs.map((p, idx) => {
+        const key = `${q.id}_${idx}`;
+        const curVal = ts.bulagAnswers[key];
+        if (curVal !== p.answer) allMatchRight = false;
+        const selOptions = `<option value="">-- Сонгоно уу --</option>` + p.options.map((o, oIdx) =>
+          `<option value="${oIdx}" ${curVal === oIdx ? `selected` : ``}>${escapeHtml(o)}</option>`
+        ).join(``);
+        return `<tr>
+          <td><strong>${escapeHtml(p.label)}</strong></td>
+          <td>
+            <label class="field-label" for="sel_${key}">Тохирох хариулт</label>
+            <select class="select-input" id="sel_${key}" onchange="selectMatch(${t.id}, '${key}', this.value)">${selOptions}</select>
+          </td>
+        </tr>`;
+      }).join(``);
+
+      let fbHtml = ``;
+      if (ts.bulagChecked) {
+        fbHtml = `<div class="feedback-line ${allMatchRight ? `feedback-line--ok` : `feedback-line--err`}">
+          ${allMatchRight ? `Бүх тохируулга зөв!` : `Зарим тохируулга дутуу эсвэл буруу байна. Мэдлэгийн сангаас дахин нягтлаарай.`}
+        </div>`;
+      }
+
+      return `<div class="task-block">
+        <p class="task-question">${escapeHtml(q.question)}</p>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Өгөгдөл</th><th>Харгалзах утга</th></tr></thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </div>
+        ${fbHtml}
+      </div>`;
+    }
+    return ``;
+  }).join(``);
+
+  const bulagHtml = `<article class="tier-card ${fl !== `all` && fl !== `bulag` ? `is-hidden` : ``}">
+    <div class="tier-header">
+      <div class="tier-badge-group">
+        <span class="tier-badge tier-badge--bulag">БУЛАГ</span>
+        <h3 class="tier-title">Сурах бичгийн мэдлэгийн даалгавар</h3>
+      </div>
+      <span class="tier-points">Оноо: ${sc.bulagPts} / 6</span>
+    </div>
+    ${bulagTasksHtml}
+    <div class="action-row">
+      <button type="button" class="btn btn-primary" onclick="checkBulag(${t.id})">Булаг түвшнийг шалгах</button>
+    </div>
+  </article>`;
+
+  // Tier 2: Togol
+  let calcFeedback = ``;
+  if (ts.togolCalcChecked) {
+    const num = parseFloat(String(ts.togolCalcInput).replace(`,`, `.`));
+    const isOk = !isNaN(num) && Math.abs(num - t.togol.calc.expected) <= t.togol.calc.tolerance;
+    calcFeedback = `<div class="feedback-line ${isOk ? `feedback-line--ok` : `feedback-line--err`}">
+      ${isOk ? `Яг зөв (+6 оноо)! ${escapeHtml(t.togol.calc.hint)}` : `Тооцоог дахин шалгана уу. Зөвлөмж: ${escapeHtml(t.togol.calc.hint)}`}
+    </div>`;
+  }
+
+  let extraWidgetHtml = ``;
+  if (t.togol.hasTimer) {
+    const mins = String(Math.floor(timerSecondsLeft / 60)).padStart(2, `0`);
+    const secs = String(timerSecondsLeft % 60).padStart(2, `0`);
+    extraWidgetHtml = `<div class="timer-widget">
+      <div>
+        <span class="field-label">2 МИНУТЫН АМЬСГАЛЫН ДАСГАЛ (4-4-4 ХЭМНЭЛ)</span>
+        <div class="timer-readout" id="meditation-timer">${mins}:${secs}</div>
+      </div>
+      <div class="action-row">
+        <button type="button" class="btn btn-primary" onclick="toggleMeditationTimer()">${timerRunning ? `Түр зогсоох` : `Дасгал эхлүүлэх`}</button>
+        <button type="button" class="btn btn-secondary" onclick="resetMeditationTimer()">Тэглэх (02:00)</button>
+      </div>
+    </div>`;
+  }
+  if (t.togol.hasDensityTool) {
+    const pop = parseFloat(ts.densityPop) || 0;
+    const area = parseFloat(ts.densityArea) || 1;
+    const dens = area > 0 ? (pop / area).toFixed(2) : `0.00`;
+    extraWidgetHtml = `<div class="task-block">
+      <p class="task-question">Өөрийн аймаг / дүүргийн хүн амын нягтшилыг тооцох туслах хэрэгсэл</p>
+      <div class="calc-grid">
+        <div class="field-group">
+          <label class="field-label" for="dens-pop">Хүн амын тоо (хүн)</label>
+          <input class="text-input" id="dens-pop" type="number" min="0" value="${escapeHtml(ts.densityPop)}" oninput="updateDensityCalc(${t.id}, 'pop', this.value)">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="dens-area">Газар нутгийн талбай (км²)</label>
+          <input class="text-input" id="dens-area" type="number" min="1" value="${escapeHtml(ts.densityArea)}" oninput="updateDensityCalc(${t.id}, 'area', this.value)">
+        </div>
+      </div>
+      <div class="calc-result-box">
+        <div>
+          <span class="metric-label">ТООЦООЛСОН НЯГТШИЛ</span>
+          <strong id="dens-result">${dens} хүн/км²</strong>
+        </div>
+        <span class="dossier-meta">Улсын дундаж: 2.2 хүн/км²</span>
+      </div>
+    </div>`;
+  }
+
+  const togolTableRowsHtml = t.togol.tableRows.map((rLabel, rIdx) => {
+    const v1 = ts.togolTable[`r${rIdx}_c1`] || ``;
+    const v2 = ts.togolTable[`r${rIdx}_c2`] || ``;
+    return `<tr>
+      <td><strong>${escapeHtml(rLabel)}</strong></td>
+      <td>
+        <label class="field-label" for="tt_${t.id}_${rIdx}_1">${escapeHtml(t.togol.tableCols[1])}</label>
+        <textarea class="textarea-input" id="tt_${t.id}_${rIdx}_1" placeholder="Үндэслэлээ бичнэ үү..." oninput="updateTogolTable(${t.id}, ${rIdx}, 1, this.value)">${escapeHtml(v1)}</textarea>
+      </td>
+      <td>
+        <label class="field-label" for="tt_${t.id}_${rIdx}_2">${escapeHtml(t.togol.tableCols[2])}</label>
+        <textarea class="textarea-input" id="tt_${t.id}_${rIdx}_2" placeholder="Дүгнэлт, жишээ бичнэ үү..." oninput="updateTogolTable(${t.id}, ${rIdx}, 2, this.value)">${escapeHtml(v2)}</textarea>
+      </td>
+    </tr>`;
+  }).join(``);
+
+  const togolHtml = `<article class="tier-card ${fl !== `all` && fl !== `togol` ? `is-hidden` : ``}">
+    <div class="tier-header">
+      <div class="tier-badge-group">
+        <span class="tier-badge tier-badge--togol">ТӨГӨЛ</span>
+        <h3 class="tier-title">${escapeHtml(t.togol.title)}</h3>
+      </div>
+      <span class="tier-points">Оноо: ${sc.togolPts} / 7</span>
+    </div>
+    <p class="task-hint">${escapeHtml(t.togol.desc)}</p>
+
+    <div class="task-block">
+      <p class="task-question">${escapeHtml(t.togol.calc.prompt)}</p>
+      <div class="calc-grid">
+        <div class="field-group">
+          <label class="field-label" for="togol-calc-${t.id}">Хариу (${escapeHtml(t.togol.calc.unit)})</label>
+          <input class="text-input" id="togol-calc-${t.id}" type="text" value="${escapeHtml(ts.togolCalcInput)}" placeholder="Тоон хариуг оруулна уу" oninput="updateTogolCalc(${t.id}, this.value)">
+        </div>
+        <div class="action-row">
+          <button type="button" class="btn btn-primary" onclick="checkTogolCalc(${t.id})">Тооцоог шалгах</button>
+        </div>
+      </div>
+      ${calcFeedback}
+    </div>
+
+    ${extraWidgetHtml}
+
+    <div class="task-block">
+      <p class="task-question">${escapeHtml(t.togol.tablePrompt)}</p>
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>${escapeHtml(t.togol.tableCols[0])}</th>
+              <th>${escapeHtml(t.togol.tableCols[1])}</th>
+              <th>${escapeHtml(t.togol.tableCols[2])}</th>
+            </tr>
+          </thead>
+          <tbody>${togolTableRowsHtml}</tbody>
+        </table>
+      </div>
+    </div>
+  </article>`;
+
+  // Tier 3: Orgil
+  const rubricHtml = t.orgil.rubric.map((rText, rIdx) => {
+    const isChecked = !!(ts.orgilRubric && ts.orgilRubric[rIdx]);
+    return `<label class="check-row">
+      <input type="checkbox" ${isChecked ? `checked` : ``} onchange="toggleOrgilRubric(${t.id}, ${rIdx}, this.checked)">
+      <span>${escapeHtml(rText)} (+2 оноо)</span>
+    </label>`;
+  }).join(``);
+
+  const charCount = (ts.orgilText || ``).trim().length;
+  const orgilHtml = `<article class="tier-card ${fl !== `all` && fl !== `orgil` ? `is-hidden` : ``}">
+    <div class="tier-header">
+      <div class="tier-badge-group">
+        <span class="tier-badge tier-badge--orgil">ОРГИЛ</span>
+        <h3 class="tier-title">${escapeHtml(t.orgil.title)}</h3>
+      </div>
+      <span class="tier-points">Оноо: ${sc.orgilPts} / 7</span>
+    </div>
+
+    <div class="task-block">
+      <p class="task-question">${escapeHtml(t.orgil.prompt)}</p>
+      <div class="field-group">
+        <label class="field-label" for="orgil-text-${t.id}">Таны дүгнэлт ба шийдэл (Одоо: ${charCount} тэмдэгт; 250+ тэмдэгт бичвэл 8 оноо)</label>
+        <textarea class="textarea-input" id="orgil-text-${t.id}" placeholder="Энд өөрийн үндэслэлтэй дүгнэлт, бодит саналаа бичнэ үү..." oninput="updateOrgilText(${t.id}, this.value)">${escapeHtml(ts.orgilText)}</textarea>
+      </div>
+    </div>
+
+    <div class="rubric-checks">
+      <span class="field-label">ӨӨРИЙН ҮНЭЛГЭЭНИЙ ШАЛГУУР (Гүйцэтгэснээ чагтлана уу)</span>
+      ${rubricHtml}
+    </div>
+  </article>`;
+
+  // Hero + Footer
+  const prevBtn = t.id > 1 ? `<button type="button" class="btn btn-secondary" onclick="selectTopic(${t.id - 1})">← Өмнөх сэдэв (${t.id - 1})</button>` : `<span></span>`;
+  const nextBtn = t.id < 9 ? `<button type="button" class="btn btn-primary" onclick="selectTopic(${t.id + 1})">Дараагийн сэдэв (${t.id + 1}) →</button>` : `<button type="button" class="btn btn-accent" onclick="toggleExportPanel()">Бүх 9 сэдвийг экспортлох</button>`;
+
+  root.innerHTML = `
+    <section class="topic-hero">
+      <div>
+        <span class="index-num">АЖЛЫН ХУУДАС №${t.code} · ИНТЕГРАЦ СЭДЭВ</span>
+        <h2 class="topic-title">${escapeHtml(t.title)}</h2>
+        <div class="subject-chips">${subjectBadgesHtml}</div>
+      </div>
+      <div class="weight-bars">
+        <span class="field-label">ХИЧЭЭЛ ХООРОНДЫН ЖИНЛЭГДСЭН ОНОО (${sc.total}/20)</span>
+        ${weightBarsHtml}
+      </div>
+    </section>
+    ${kbHtml}
+    ${filterHtml}
+    ${bulagHtml}
+    ${togolHtml}
+    ${orgilHtml}
+    <div class="topic-footer-nav">
+      ${prevBtn}
+      ${nextBtn}
+    </div>
+  `;
+}
+
+function escapeHtml(str) {
+  return String(str == null ? `` : str)
+    .replace(/&/g, `&amp;`)
+    .replace(/</g, `&lt;`)
+    .replace(/>/g, `&gt;`)
+    .replace(/"/g, `&quot;`)
+    .replace(/'/g, `&#39;`);
+}
+
+let saveDebounce = null;
+async function persistState() {
+  const statusEl = document.getElementById(`save-status`);
+  if (statusEl) statusEl.textContent = `Хадгалж байна…`;
+
+  if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === `function`) {
+    try {
+      await window.notebookAppApi.setAppState(appState);
+      if (statusEl) statusEl.textContent = `Хадгалагдлаа`;
+    } catch (e) {
+      if (statusEl) statusEl.textContent = `Түр санах ойд хадгалагдлаа`;
+    }
+  } else {
+    if (statusEl) statusEl.textContent = `Идэвхтэй санах ойд хадгалагдлаа`;
+  }
+}
+
+function scheduleSave() {
+  updateGlobalHeader();
+  renderTopicTabs();
+  if (saveDebounce) clearTimeout(saveDebounce);
+  saveDebounce = setTimeout(() => {
+    persistState();
+  }, 250);
+}
+
+// Interactive Event Handlers (function declarations for hoisting)
+function selectTopic(id) {
+  stopMeditationTimer();
+  appState.activeTopicId = id;
+  renderTopicTabs();
+  renderWorkspace();
+  updateGlobalHeader();
+  scheduleSave();
+}
+
+function setLevelFilter(filter) {
+  appState.levelFilter = filter;
+  renderWorkspace();
+  scheduleSave();
+}
+
+function toggleKb(topicId) {
+  const ts = getTopicState(topicId);
+  ts.kbOpen = !ts.kbOpen;
+  renderWorkspace();
+  scheduleSave();
+}
+
+function toggleKbRead(topicId) {
+  const ts = getTopicState(topicId);
+  ts.kbRead = !ts.kbRead;
+  renderWorkspace();
+  scheduleSave();
+}
+
+function selectMcq(topicId, qId, optionIdx) {
+  const ts = getTopicState(topicId);
+  ts.bulagAnswers[qId] = optionIdx;
+  renderWorkspace();
+  scheduleSave();
+}
+
+function selectMatch(topicId, key, valStr) {
+  const ts = getTopicState(topicId);
+  ts.bulagAnswers[key] = valStr === `` ? undefined : parseInt(valStr, 10);
+  scheduleSave();
+}
+
+function checkBulag(topicId) {
+  const ts = getTopicState(topicId);
+  ts.bulagChecked = true;
+  renderWorkspace();
+  scheduleSave();
+}
+
+function updateTogolCalc(topicId, val) {
+  const ts = getTopicState(topicId);
+  ts.togolCalcInput = val;
+  scheduleSave();
+}
+
+function checkTogolCalc(topicId) {
+  const ts = getTopicState(topicId);
+  ts.togolCalcChecked = true;
+  renderWorkspace();
+  scheduleSave();
+}
+
+function updateTogolTable(topicId, rowIdx, colIdx, val) {
+  const ts = getTopicState(topicId);
+  ts.togolTable[`r${rowIdx}_c${colIdx}`] = val;
+  scheduleSave();
+}
+
+function updateDensityCalc(topicId, field, val) {
+  const ts = getTopicState(topicId);
+  if (field === `pop`) ts.densityPop = val;
+  if (field === `area`) ts.densityArea = val;
+  const pop = parseFloat(ts.densityPop) || 0;
+  const area = parseFloat(ts.densityArea) || 1;
+  const resEl = document.getElementById(`dens-result`);
+  if (resEl) {
+    resEl.textContent = area > 0 ? `${(pop / area).toFixed(2)} хүн/км²` : `0.00 хүн/км²`;
+  }
+  scheduleSave();
+}
+
+function updateOrgilText(topicId, val) {
+  const ts = getTopicState(topicId);
+  ts.orgilText = val;
+  scheduleSave();
+}
+
+function toggleOrgilRubric(topicId, rIdx, checked) {
+  const ts = getTopicState(topicId);
+  if (!ts.orgilRubric) ts.orgilRubric = [false, false, false];
+  ts.orgilRubric[rIdx] = !!checked;
+  renderWorkspace();
+  scheduleSave();
+}
+
+function updateStudentField(field, val) {
+  appState.student[field] = val;
+  scheduleSave();
+}
+
+// Meditation Timer for Topic 8
+function stopMeditationTimer() {
+  if (activeTimerInterval) {
+    clearInterval(activeTimerInterval);
+    activeTimerInterval = null;
+  }
+  timerRunning = false;
+}
+
+function toggleMeditationTimer() {
+  if (timerRunning) {
+    stopMeditationTimer();
+    renderWorkspace();
+    return;
+  }
+  timerRunning = true;
+  renderWorkspace();
+  activeTimerInterval = setInterval(() => {
+    if (timerSecondsLeft > 0) {
+      timerSecondsLeft -= 1;
+      const el = document.getElementById(`meditation-timer`);
+      if (el) {
+        const mins = String(Math.floor(timerSecondsLeft / 60)).padStart(2, `0`);
+        const secs = String(timerSecondsLeft % 60).padStart(2, `0`);
+        el.textContent = `${mins}:${secs}`;
+      }
+    } else {
+      stopMeditationTimer();
+      renderWorkspace();
+    }
+  }, 1000);
+}
+
+function resetMeditationTimer() {
+  stopMeditationTimer();
+  timerSecondsLeft = 120;
+  renderWorkspace();
+}
+
+// Reset All (two-step inline confirmation)
+function handleResetAll(btn) {
+  if (!btn) return;
+  if (btn.dataset.armed !== `true`) {
+    btn.dataset.armed = `true`;
+    btn.textContent = `Баталгаажуулах (Дахин дарна уу)`;
+    setTimeout(() => {
+      if (btn.dataset.armed === `true`) {
+        btn.dataset.armed = `false`;
+        btn.textContent = `Шинээр эхлэх`;
+      }
+    }, 4000);
+    return;
+  }
+  btn.dataset.armed = `false`;
+  btn.textContent = `Шинээр эхлэх`;
+  stopMeditationTimer();
+  timerSecondsLeft = 120;
+  appState = {
+    activeTopicId: 1,
+    levelFilter: `all`,
+    student: { name: ``, className: ``, region: `` },
+    topics: {}
+  };
+  const nEl = document.getElementById(`student-name`);
+  const cEl = document.getElementById(`student-class`);
+  const rEl = document.getElementById(`student-region`);
+  if (nEl) nEl.value = ``;
+  if (cEl) cEl.value = ``;
+  if (rEl) rEl.value = ``;
+  renderTopicTabs();
+  renderWorkspace();
+  updateGlobalHeader();
+  persistState();
+}
+
+// Export Builder
+function buildExportText() {
+  const s = appState.student;
+  let grandTotal = 0;
+  const lines = [
+    `VIII АНГИЙН ХИЧЭЭЛ ХООРОНДЫН ИНТЕГРАЦ АЖЛЫН ХУУДАС — ГҮЙЦЭТГЭЛИЙН ТАЙЛАН`,
+    `========================================================================`,
+    `Сурагч: ${s.name || `(Оруулаагүй)`} | Анги: ${s.className || `(Оруулаагүй)`} | Аймаг/Дүүрэг: ${s.region || `(Оруулаагүй)`}`,
+    `Огноо: ${new Date().toISOString().slice(0, 10)}`,
+    ``
+  ];
+
+  TOPICS.forEach((t) => {
+    const ts = getTopicState(t.id);
+    const sc = computeTopicScores(t);
+    grandTotal += sc.total;
+    const weights = t.subjects.map((sb) => `${sb.name} ${sb.pct}%`).join(` · `);
+    lines.push(`--- СЭДЭВ ${t.code}: ${t.title} ---`);
+    lines.push(`Харьцаа: ${weights}`);
+    lines.push(`Нийт оноо: ${sc.total} / 20 (Булаг: ${sc.bulagPts}/6 | Төгөл: ${sc.togolPts}/7 | Оргил: ${sc.orgilPts}/7)`);
+    lines.push(`Мэдлэгийн сан уншсан: ${ts.kbRead ? `Тийм` : `Үгүй`} | Тооцоо хариу: ${ts.togolCalcInput || `-`}`);
+
+    t.togol.tableRows.forEach((rowLabel, rIdx) => {
+      const c1 = (ts.togolTable[`r${rIdx}_c1`] || ``).trim();
+      const c2 = (ts.togolTable[`r${rIdx}_c2`] || ``).trim();
+      if (c1 || c2) {
+        lines.push(`  • ${rowLabel}: [1] ${c1 || `-`} | [2] ${c2 || `-`}`);
+      }
+    });
+
+    if ((ts.orgilText || ``).trim()) {
+      lines.push(`  Оргил дүгнэлт: ${ts.orgilText.trim()}`);
+    }
+    lines.push(``);
+  });
+
+  lines.splice(4, 0, `НИЙТ ОНОО: ${grandTotal} / 180 (${Math.round((grandTotal / 180) * 100)}%)`);
+  return lines.join(`\n`);
+}
+
+function buildExportCsv() {
+  const s = appState.student;
+  const rows = [
+    [`Сурагч`, `Анги`, `Аймаг/Дүүрэг`, `Сэдэв №`, `Сэдвийн нэр`, `Булаг (6)`, `Төгөл (7)`, `Оргил (7)`, `Нийт (20)`, `Тооцооны хариу`, `Оргил бичвэр`]
+  ];
+  TOPICS.forEach((t) => {
+    const ts = getTopicState(t.id);
+    const sc = computeTopicScores(t);
+    const cleanText = String(ts.orgilText || ``).replace(/"/g, `""`).replace(/\r?\n/g, ` `);
+    rows.push([
+      `"${String(s.name || ``).replace(/"/g, `""`)}"`,
+      `"${String(s.className || ``).replace(/"/g, `""`)}"`,
+      `"${String(s.region || ``).replace(/"/g, `""`)}"`,
+      t.code,
+      `"${t.title}"`,
+      sc.bulagPts,
+      sc.togolPts,
+      sc.orgilPts,
+      sc.total,
+      `"${String(ts.togolCalcInput || ``).replace(/"/g, `""`)}"`,
+      `"${cleanText}"`
+    ]);
+  });
+  return `\uFEFF` + rows.map((r) => r.join(`,`)).join(`\n`);
+}
+
+function toggleExportPanel() {
+  const panel = document.getElementById(`export-panel`);
+  const pre = document.getElementById(`export-preview`);
+  const fb = document.getElementById(`export-feedback`);
+  if (!panel || !pre) return;
+
+  const willOpen = panel.classList.contains(`is-hidden`);
+  if (willOpen) {
+    pre.textContent = buildExportText();
+    if (fb) fb.textContent = ``;
+    panel.classList.remove(`is-hidden`);
+    panel.scrollIntoView({ behavior: `smooth`, block: `nearest` });
+  } else {
+    panel.classList.add(`is-hidden`);
+  }
+}
+
+function downloadReport(fmt) {
+  const fb = document.getElementById(`export-feedback`);
+  const isCsv = fmt === `csv`;
+  const content = isCsv ? buildExportCsv() : buildExportText();
+  const contentType = isCsv ? `text/csv` : `text/plain`;
+  const safeName = (appState.student.name || `suragch`).replace(/\s+/g, `_`);
+  const filename = `8_angi_integrats_${safeName}.${isCsv ? `csv` : `txt`}`;
+
+  if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === `function`) {
+    window.notebookAppApi.triggerFileDownload({
+      content: content,
+      contentType: contentType,
+      encoding: `UTF-8`,
+      filename: filename
+    });
+    if (fb) fb.textContent = `${filename} файл татагдаж эхэллээ.`;
+  } else {
+    const blob = new Blob([content], { type: `${contentType};charset=utf-8` });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement(`a`);
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    if (fb) fb.textContent = `${filename} файл татагдлаа.`;
+  }
+}
+
+function copyReportText() {
+  const fb = document.getElementById(`export-feedback`);
+  const txt = buildExportText();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(() => {
+      if (fb) fb.textContent = `Тайлан санах ойд хуулагдлаа. Багшдаа шууд илгээх боломжтой.`;
+    }).catch(() => {
+      if (fb) fb.textContent = `Доорх хайрцгаас текстийг гараар хуулж авна уу.`;
+    });
+  } else {
+    if (fb) fb.textContent = `Доорх хайрцгаас текстийг гараар хуулж авна уу.`;
+  }
+}
+
+async function initApp() {
+  const saved = window.notebookAppApi ? await window.notebookAppApi.getAppState() : null;
+  if (saved && typeof saved === `object`) {
+    appState = {
+      activeTopicId: saved.activeTopicId || 1,
+      levelFilter: saved.levelFilter || `all`,
+      student: saved.student || { name: ``, className: ``, region: `` },
+      topics: saved.topics || {}
+    };
+  }
+
+  const nEl = document.getElementById(`student-name`);
+  const cEl = document.getElementById(`student-class`);
+  const rEl = document.getElementById(`student-region`);
+  if (nEl) nEl.value = appState.student.name || ``;
+  if (cEl) cEl.value = appState.student.className || ``;
+  if (rEl) rEl.value = appState.student.region || ``;
+
+  renderTopicTabs();
+  renderWorkspace();
+  updateGlobalHeader();
+
+  if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === `function`) {
+    window.notebookAppApi.notifyAppReady();
+  }
+}
+
+
+/* ===== 3 түвшин тус бүр 20 оноотой: нэмэлт даалгавар ===== */
+const LV = { bulag: `Булаг`, togol: `Төгөл`, orgil: `Оргил` };
+const EXTRA = {
+  1: { b: [
+      [`Монголын бэлчээрийн доройтлын хамгийн их хувийг (38.4%) юу эзэлдэг вэ?`, [`Цөлжилт`, `Талхлагдал`, `Мэрэгч, хортон шавжид идэгдсэн`, `Намагжилт`], 2],
+      [`Монгол орны агаарын температур сүүлийн 76 жилд хэдэн °C-ээр дулаарсан бэ?`, [`0.8°C`, `1.5°C`, `2.24°C`, `4.0°C`], 2],
+      [`Бэлчээрийн доройтлоос сэргийлж малчид юу хийдэг вэ?`, [`Нэг газраа тогтмол бэлчээрлэнэ`, `Улирлаар отор нүүдэл хийж бэлчээрээ сэлгэнэ`, `Малаа бүгдийг нь зарна`, `Бэлчээрээ хашаад хаана`], 1]
+    ], t: [
+      [`Лондонгийн «Их утаа»-г Англи хэрхэн даван туулсан бэ?`, [`Хууль тогтоомж, түлшний шинэчлэлээр`, `Хотыг бүрэн нүүлгэснээр`, `Үйлдвэрүүдийг хориглосноор`, `Байгалийн аясаар`], 0],
+      [`Бэлчээрийн 31.9% талхлагдаж, 24.6% цөлжсөн бол энэ хоёрын зөрүү хэд вэ?`, [`5.3%`, `6.3%`, `7.3%`, `8.3%`], 2]
+    ], o2: `Ашигт малтмалын олборлолтыг «зөвшөөрөх», «хориглох», «нөхцөлтэй зөвшөөрөх» гурваас нэгийг сонгож, байр сууриа 2 үндэслэлээр хамгаалаад, эсрэг талын нэг аргументыг няцаана уу.` },
+  2: { b: [
+      [`Баруун бүсэд (Баян-Өлгий, Увс, Ховд) аль угсаатан түлхүү оршдог вэ?`, [`Буриад`, `Казак`, `Дархад`, `Барга`], 1],
+      [`Хөвсгөл, Сэлэнгэ, Хэнтий, Дорнод аймгийн хойд бүсэд аль угсаатан оршдог вэ?`, [`Торгууд`, `Баяд`, `Дархад`, `Захчин`], 2],
+      [`XV–XVII зуунд Монголчууд хэдэн том хэсэгт хуваагдсан бэ?`, [`2`, `3`, `4`, `5`], 1]
+    ], t: [
+      [`Угсаатан бүрийн хувцас, аялгуу, аж ахуйн хэв маяг юутай нягт холбоотой вэ?`, [`Зөвхөн хэлтэй`, `Газар зүйн орчин, түүхэн замналтай`, `Зөвхөн шашинтай`, `Ямартай ч холбоогүй`], 1],
+      [`Соёлын ялгааг хүндлэх нь юуны үндэс болдог вэ?`, [`Нийгмийн эв нэгдлийн`, `Тусгаарлалтын`, `Өрсөлдөөний`, `Гадуурхалтын`], 0]
+    ], o2: `Өөр угсаатны найзтайгаа харилцахдаа соёлын ялгааг хүндэтгэх 3 дүрэм санал болгож, нэг бодит жишээгээр тайлбарлана уу.` },
+  3: { b: [
+      [`Х.Колумб Америк тивд хэдэн онд хүрсэн бэ?`, [`1453`, `1492`, `1498`, `1519`], 1],
+      [`Ф.Магелланы баг дэлхийг анх удаа хэдэн онд тойрсон бэ?`, [`1492–1495`, `1497–1498`, `1519–1522`, `1600–1605`], 2],
+      [`Уртрагийг ямар голдролоос тоолдог вэ?`, [`Гринвичийн`, `Экваторын`, `Тропикийн`, `Туйлын`], 0]
+    ], t: [
+      [`Монгол Улс далайд гарцгүй тул гадаад худалдаанд ямар тээвэр чухал үүрэгтэй вэ?`, [`Далайн`, `Транзит`, `Усан`, `Сансрын`], 1],
+      [`Цилиндр тусгаг зураг дээр экватороос туйл руу чиглэх тусам юу болдог вэ?`, [`Зай, талбай сунаж гажна`, `Бүх зүйл жижгэрнэ`, `Өөрчлөлтгүй`, `Зөвхөн өнгө өөрчлөгдөнө`], 0]
+    ], o2: `Колоничлолын сөрөг үр дагаврыг (газар нутаг булаагдах, боолчлол) хүний эрхийн үүднээс үнэлж, ийм үйл явдал давтагдахаас сэргийлэх 2 зарчим санал болгоно уу.` },
+  4: { b: [
+      [`Дэлхий 1 цагт хэдэн градус уртраг эргэх вэ?`, [`12°`, `15°`, `24°`, `30°`], 1],
+      [`Монгол орон хойд өргөргийн хэдэн градусын хооронд оршдог вэ?`, [`42°–52°`, `30°–40°`, `52°–62°`, `20°–30°`], 0],
+      [`«Дэлхий нарыг тойрдог» гэж үзсэн эрдэмтэн хэн бэ?`, [`И.Ньютон`, `Г.Галилей`, `Н.Коперник`, `Х.Колумб`], 2]
+    ], t: [
+      [`Токио (+9-р бүс)-д 15:00 бол Улаанбаатар (+8-р бүс)-т хэдэн цаг болох вэ?`, [`14:00`, `15:00`, `16:00`, `17:00`], 0],
+      [`Хоёр хотын уртраг 30°-аар зөрвөл цагийн зөрүү хэд вэ? (1° уртраг = 4 минут)`, [`1 цаг`, `2 цаг`, `3 цаг`, `4 цаг`], 1]
+    ], o2: `XVIII зууны далайн хронометр цаг хугацаа ба орон зайг холбосон гэж үздэг. Өнөөгийн нэг технологийг (жишээ нь байршил тогтоох систем) нэрлээд ижил логикоор тайлбарлана уу.` },
+  5: { b: [
+      [`Дараахаас аль нь «Төрийн тахилгатай уул» вэ?`, [`Хөх нуур`, `Орхон гол`, `Богдхан`, `Тавантолгой`], 2],
+      [`Нүүхдээ гэрийн буурь, хог хаягдлыг яах ёстой вэ?`, [`Бүрэн цэвэрлэнэ`, `Шатаана`, `Булна`, `Үлдээнэ`], 0],
+      [`Гол горхи, булаг шандад юуг оруулахыг цээрлэдэг вэ?`, [`Мод, цэцэг`, `Сүү, цус`, `Ус`, `Чулуу`], 1]
+    ], t: [
+      [`Дараахаас аль нь улсын тусгай хамгаалалттай газарт ХАМААРАХГҮЙ вэ?`, [`Дархан цаазат газар`, `Байгалийн нөөц газар`, `Дурсгалт газар`, `Хувийн тариалангийн талбай`], 3],
+      [`4 улирлаар сэлгэн бэлчээрлэх уламжлал орчин үеийн ямар зарчимтай ойр вэ?`, [`Бэлчээрт нөхөн сэргэх хугацаа өгөх`, `Нэг газар тогтмол бэлчээрлэх`, `Мал тоог хязгааргүй өсгөх`, `Нүүдлийг зогсоох`], 0]
+    ], o2: `Уламжлалт цээр ёсны аль нэгийг сонгож, түүнийг орчин үеийн хамгаалалтын арга хэмжээ (тусгай хамгаалалттай газар г.м)-тэй хэрхэн нэгтгэж болохыг тайлбарлана уу.` },
+  6: { b: [
+      [`Хойд ойт хээрийн бүсэд ямар аж ахуй таатай вэ?`, [`Говийн тэмээний аж ахуй`, `Газар тариалан, эрчимжсэн мал аж ахуй`, `Зөвхөн уул уурхай`, `Загасны аж ахуй`], 1],
+      [`Цэвэр ашгийг хэрхэн тооцдог вэ?`, [`Нийт орлого + нийт зардал`, `Нийт зардал − нийт орлого`, `Нийт орлого − нийт зардал`, `Нийт орлого × нийт зардал`], 2],
+      [`Манай орны нутгийн хэдэн хувь нь д.т.д 1000 м-ээс дээш оршдог вэ?`, [`50%`, `65%`, `80%`, `95%`], 2]
+    ], t: [
+      [`Сарын орлого 5 сая, зардал 3.2 сая төгрөг бол цэвэр ашиг хэд вэ?`, [`0.8 сая`, `1.8 сая`, `2.8 сая`, `8.2 сая`], 1],
+      [`Туул гол (эх 1850 м → адаг 780 м)-ы нийт унал хэд вэ?`, [`780 м`, `1070 м`, `1850 м`, `2630 м`], 1]
+    ], o2: `Танай орон нутагт нэг жижиг бизнес санал болгож, сарын орлого, зардлыг тоогоор тооцоод, гол эрсдэл болон түүнийг даван туулах нэг аргыг бичнэ үү.` },
+  7: { b: [
+      [`Зөрчлийг «win-win» шийдвэрлэх арга зам аль нь вэ?`, [`Сөргөлдөх`, `Харилцан сонсож, буулт хийх`, `Үл тоох`, `Хүчээр дарах`], 1],
+      [`Өвөр Монгол Манжийн эрхшээлд хэдэн онд орсон бэ?`, [`1636`, `1691`, `1755`, `1911`], 0],
+      [`«Эвт шаазгай буга барина» гэх ухаан юуг онцолдог вэ?`, [`Хүч`, `Эв нэгдэл`, `Баялаг`, `Хурд`], 1]
+    ], t: [
+      [`Уур хилэн хөдөлсөн үед зөрчлийг эергээр шийдэх арга аль нь вэ?`, [`Шууд хариу хэлэх`, `Уураа тэвчиж, бэрхшээлийг тунгаах`, `Зайлсхийж орхих`, `Бусдыг буруутгах`], 1],
+      [`Ойрад тусгаар тогтнолоо алдсан он аль нь вэ?`, [`1636`, `1691`, `1755–1758`, `1911`], 2]
+    ], o2: `XV–XVII зууны ноёдын хоорондын тэмцлийн сургамжийг өнөөгийн нэг хамт олны (анги, гэр бүл) зөрчилд хэрэглэж, 3 алхамтай шийдвэрлэх төлөвлөгөө бичнэ үү.` },
+  8: { b: [
+      [`Эрдэнэзуу хийд аль аймагт, ямар хөндийд байдаг вэ?`, [`Сэлэнгэ, Ивэн голын`, `Өвөрхангай, Орхоны`, `Туул голын`, `Хэнтий, Онон голын`], 1],
+      [`Стрессийн үед ялгардаг ямар даавар анхаарал, ой тогтоолтыг бууруулдаг вэ?`, [`Кортизол`, `Инсулин`, `Мелатонин`, `Адреналин`], 0],
+      [`Соёмбо үсгийг хэн зохион бүтээсэн бэ?`, [`Абтай сайн хан`, `Занабазар`, `Содномжамц`, `Алтан хан`], 1]
+    ], t: [
+      [`Амьсгалын дасгалын «4-4-4» хэмнэл юу вэ?`, [`4 сек аван, 4 бариад, 4 гаргана`, `4 сек аван, 4 гаргана`, `4 минут аван`, `4 удаа гүнзгий`], 0],
+      [`Гандантэгчилэн хийд ямар голын хөндийд байдаг вэ?`, [`Орхон`, `Ивэн`, `Туул`, `Хэрлэн`], 2]
+    ], o2: `Шалгалт эсвэл зөрчлийн үеийн стрессээ тайлах өөрийн 3 алхамтай төлөвлөгөө (амьсгалын дасгалыг оролцуулан) бичиж, яагаад үр дүнтэйг тайлбарлана уу.` },
+  9: { b: [
+      [`Хүн амын нягтшлыг хэрхэн тооцдог вэ?`, [`Талбай ÷ хүн ам`, `Хүн ам ÷ талбай`, `Хүн ам × талбай`, `Хүн ам − талбай`], 1],
+      [`Монгол Улсын дундаж нягтшил ойролцоогоор хэд вэ?`, [`0.5 хүн/км²`, `2.2 хүн/км²`, `22 хүн/км²`, `220 хүн/км²`], 1],
+      [`Нийт хүн амын ойролцоогоор хэдэн хувь нь Улаанбаатарт оршин суудаг вэ?`, [`10 орчим`, `25 орчим`, `50 орчим`, `80 орчим`], 2]
+    ], t: [
+      [`Хүн ам 200,000, талбай 100,000 км² бол нягтшил хэд вэ?`, [`0.5`, `2`, `20`, `200`], 1],
+      [`Өмнөговь аймагт хүн ам 33.9 мянгаас 60.5 мянга болсон бол өсөлт хэд вэ?`, [`16.6 мянга`, `26.6 мянга`, `36.6 мянга`, `94.4 мянга`], 1]
+    ], o2: `Танай орон нутгийн хүн амын шилжилт хөдөлгөөнд сургууль, эмнэлэг, ажлын байрнаас аль нь хамгийн их нөлөөлж буйг үндэслээд, «ачийг хариулах» нэг бодит санал бичнэ үү.` }
+};
+
+/* ===== Түвшин сонгох · 20 онооны тооцоо ===== */
+function getTopicState(id) {
+  if (!appState.topics[id]) {
+    appState.topics[id] = { level: ``, kbOpen: true, kbRead: false, bulagAnswers: {}, bulagChecked: false, xans: {}, togolCalcInput: ``, togolCalcChecked: false, togolChecked: false, togolTable: {}, densityPop: `100000`, densityArea: `50000`, orgilText: ``, orgilText2: ``, orgilRubric: [false, false, false] };
+  }
+  const s = appState.topics[id];
+  if (!s.xans) s.xans = {};
+  if (s.orgilText2 == null) s.orgilText2 = ``;
+  if (s.level == null) s.level = ``;
+  return s;
+}
+
+function computeTopicScores(topic) {
+  const ts = getTopicState(topic.id), E = EXTRA[topic.id];
+  let b = 0, t = 0, o = 0;
+  if (ts.kbRead) b += 2;
+  if (ts.bulagChecked) {
+    let s = 0;
+    topic.bulag.forEach((q) => {
+      if (q.type === `mcq`) s += ts.bulagAnswers[q.id] === q.answer ? 1 : 0;
+      else s += q.pairs.filter((p, i) => ts.bulagAnswers[`${q.id}_${i}`] === p.answer).length / q.pairs.length;
+    });
+    b += Math.round((9 * s) / topic.bulag.length);
+    E.b.forEach((q, i) => { if (ts.xans[`b${i}`] === q[2]) b += 3; });
+  }
+  if (ts.togolCalcChecked) {
+    const v = parseFloat(String(ts.togolCalcInput).replace(`,`, `.`));
+    if (!isNaN(v) && Math.abs(v - topic.togol.calc.expected) <= topic.togol.calc.tolerance) t += 6;
+  }
+  let f = 0;
+  topic.togol.tableRows.forEach((_, r) => [1, 2].forEach((c) => { if ((ts.togolTable[`r${r}_c${c}`] || ``).trim().length >= 4) f += 1; }));
+  t += Math.round((8 * f) / (topic.togol.tableRows.length * 2));
+  if (ts.togolChecked) E.t.forEach((q, i) => { if (ts.xans[`t${i}`] === q[2]) t += 3; });
+  const l1 = (ts.orgilText || ``).trim().length;
+  o += l1 >= 250 ? 8 : l1 >= 150 ? 6 : l1 >= 80 ? 4 : l1 >= 30 ? 2 : 0;
+  (ts.orgilRubric || []).forEach((c) => { if (c) o += 2; });
+  const l2 = (ts.orgilText2 || ``).trim().length;
+  o += l2 >= 150 ? 6 : l2 >= 100 ? 4 : l2 >= 50 ? 2 : 0;
+  const by = { bulag: b, togol: t, orgil: o };
+  return { bulagPts: b, togolPts: t, orgilPts: o, level: ts.level, total: ts.level ? Math.min(20, by[ts.level]) : 0 };
+}
+
+function xBlock(tid, key, arr, checked, ts, title) {
+  return `<p class="task-hint"><strong>${title}</strong></p>` + arr.map((q, i) => {
+    const sel = ts.xans[`${key}${i}`];
+    const opts = q[1].map((o, j) => {
+      let c = `mcq-option`;
+      if (sel === j) c += ` is-selected`;
+      if (checked) { if (j === q[2]) c += ` is-correct`; else if (sel === j) c += ` is-wrong`; }
+      return `<label class="${c}"><input type="radio" name="x_${key}${i}" ${sel === j ? `checked` : ``} onchange="pickX(${tid}, '${key}${i}', ${j})"><span>${escapeHtml(o)}</span></label>`;
+    }).join(``);
+    return `<div class="task-block"><p class="task-question">${escapeHtml(q[0])}</p><div class="mcq-options">${opts}</div></div>`;
+  }).join(``);
+}
+
+function renderWorkspace() {
+  const t = TOPICS.find((x) => x.id === appState.activeTopicId) || TOPICS[0];
+  const ts = getTopicState(t.id);
+  appState.levelFilter = ts.level || `none`;
+  renderWorkspaceBase();
+  const root = document.getElementById(`workspace-root`);
+  if (!root) return;
+  const E = EXTRA[t.id], sc = computeTopicScores(t);
+  const bar = root.querySelector(`.level-filter-bar`);
+  if (bar) {
+    bar.style.display = `block`;
+    bar.innerHTML = `<div class="field-label">ЭНЭ СЭДВИЙН ДААЛГАВРАА СОНГОНО УУ</div>
+      <div class="level-pills">${[`bulag`, `togol`, `orgil`].map((k) => `<button type="button" class="level-pill ${ts.level === k ? `is-active` : ``}" onclick="setLevel(${t.id}, '${k}')"><strong>${LV[k]}</strong></button>`).join(``)}</div>
+      <span class="index-num">Сэдвийн оноо: ${sc.total} / 20${ts.level ? `` : ` · Даалгавраа сонгоно уу`}</span>`;
+  }
+  if (!ts.level) return;
+  const cards = root.querySelectorAll(`.tier-card`);
+  const idx = { bulag: 0, togol: 1, orgil: 2 }[ts.level];
+  const pts = { bulag: sc.bulagPts, togol: sc.togolPts, orgil: sc.orgilPts }[ts.level];
+  const tp = cards[idx].querySelector(`.tier-points`);
+  if (tp) tp.textContent = `Оноо: ${pts} / 20`;
+  if (ts.level !== `bulag`) {
+    const kbBtn = root.querySelector(`.kb-confirm-bar button`);
+    if (kbBtn) kbBtn.textContent = ts.kbRead ? `✓ Уншиж танилцсан` : `Уншиж танилцлаа гэж тэмдэглэх`;
+  }
+  if (ts.level === `bulag`) {
+    const row = cards[0].querySelector(`.action-row`);
+    if (row) row.insertAdjacentHTML(`beforebegin`, xBlock(t.id, `b`, E.b, ts.bulagChecked, ts, `Нэмэлт асуултууд (тус бүр 3 оноо)`));
+  } else if (ts.level === `togol`) {
+    let fb = ``;
+    if (ts.togolChecked) fb = `<div class="feedback-line feedback-line--ok">Зөв хариултыг ногооноор тэмдэглэв. Мэдлэгийн сангаас дахин шалгана уу.</div>`;
+    cards[1].insertAdjacentHTML(`beforeend`, `<div class="task-block">${xBlock(t.id, `t`, E.t, ts.togolChecked, ts, `Баримтад үндэслэн хэрэглэх асуултууд (тус бүр 3 оноо)`)}<div class="action-row"><button type="button" class="btn btn-primary" onclick="checkTogolFacts(${t.id})">Асуултуудыг шалгах</button></div>${fb}</div>
+      <p class="task-hint">Оноо: тооцоо 6 + хүснэгт 8 + баримтын асуулт 6 = 20.</p>`);
+  } else {
+    cards[2].insertAdjacentHTML(`beforeend`, `<div class="task-block"><p class="task-question">Даалгавар 2 (6 оноо): ${escapeHtml(E.o2)}</p>
+      <div class="field-group"><label class="field-label" for="orgil2-${t.id}">Таны хариулт (150+ тэмдэгт бичвэл 6 оноо)</label>
+      <textarea class="textarea-input" id="orgil2-${t.id}" oninput="updateOrgilText2(${t.id}, this.value)" placeholder="Үндэслэлтэй хариугаа энд бичнэ үү...">${escapeHtml(ts.orgilText2)}</textarea></div></div>
+      <p class="task-hint">Оноо: даалгавар 1 (8) + өөрийн үнэлгээний шалгуур (6) + даалгавар 2 (6) = 20.</p>`);
+  }
+}
+
+function setLevel(id, lv) { getTopicState(id).level = lv; renderWorkspace(); scheduleSave(); }
+function pickX(id, key, j) { getTopicState(id).xans[key] = j; renderWorkspace(); scheduleSave(); }
+function checkTogolFacts(id) { getTopicState(id).togolChecked = true; renderWorkspace(); scheduleSave(); }
+function updateOrgilText2(id, v) { getTopicState(id).orgilText2 = v; scheduleSave(); }
+
+/* ===== Хадгалалт (GitHub Pages дээр хөтөч санах ой) ===== */
+async function persistState() {
+  const el = document.getElementById(`save-status`);
+  try { localStorage.setItem(`ws8_state`, JSON.stringify(appState)); if (el) el.textContent = `Хадгалагдлаа (энэ төхөөрөмж)`; }
+  catch (e) { if (el) el.textContent = `Хадгалж чадсангүй`; }
+}
+async function initApp() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(`ws8_state`));
+    if (saved && typeof saved === `object`) appState = { activeTopicId: saved.activeTopicId || 1, levelFilter: `none`, student: saved.student || { name: ``, className: ``, region: `` }, topics: saved.topics || {} };
+  } catch (e) {}
+  [[`student-name`, `name`], [`student-class`, `className`], [`student-region`, `region`]].forEach(([id, k]) => { const e = document.getElementById(id); if (e) e.value = appState.student[k] || ``; });
+  renderTopicTabs(); renderWorkspace(); updateGlobalHeader();
+}
+
+/* ===== Багшид экспортлох ===== */
+function buildExportText() {
+  const s = appState.student; let grand = 0;
+  const lines = [`VIII АНГИЙН ХИЧЭЭЛ ХООРОНДЫН ИНТЕГРАЦ АЖЛЫН ХУУДАС — ГҮЙЦЭТГЭЛИЙН ТАЙЛАН`, `========================================================================`,
+    `Сурагч: ${s.name || `(Оруулаагүй)`} | Анги: ${s.className || `(Оруулаагүй)`} | Аймаг/Дүүрэг: ${s.region || `(Оруулаагүй)`}`, `Огноо: ${new Date().toISOString().slice(0, 10)}`, ``];
+  TOPICS.forEach((t) => {
+    const ts = getTopicState(t.id), sc = computeTopicScores(t); grand += sc.total;
+    lines.push(`--- СЭДЭВ ${t.code}: ${t.title} ---`, `Сонгосон даалгавар: ${ts.level ? LV[ts.level] : `(сонгоогүй)`} | Оноо: ${sc.total} / 20`);
+    if (ts.level === `togol`) {
+      lines.push(`Тооцооны хариу: ${ts.togolCalcInput || `-`}`);
+      t.togol.tableRows.forEach((r, i) => { const a = (ts.togolTable[`r${i}_c1`] || ``).trim(), c = (ts.togolTable[`r${i}_c2`] || ``).trim(); if (a || c) lines.push(`  • ${r}: [1] ${a || `-`} | [2] ${c || `-`}`); });
+    }
+    if (ts.level === `orgil`) {
+      if ((ts.orgilText || ``).trim()) lines.push(`  Даалгавар 1: ${ts.orgilText.trim()}`);
+      if ((ts.orgilText2 || ``).trim()) lines.push(`  Даалгавар 2: ${ts.orgilText2.trim()}`);
+    }
+    lines.push(``);
+  });
+  lines.splice(4, 0, `НИЙТ ОНОО: ${grand} / 180 (${Math.round((grand / 180) * 100)}%)`);
+  return lines.join(`\n`);
+}
+function buildExportCsv() {
+  const s = appState.student, q = (v) => `"${String(v == null ? `` : v).replace(/"/g, `""`).replace(/\r?\n/g, ` `)}"`;
+  const rows = [[`Сурагч`, `Анги`, `Аймаг/Дүүрэг`, `Сэдэв №`, `Сэдвийн нэр`, `Даалгавар`, `Оноо (20)`, `Тооцооны хариу`, `Оргил даалгавар 1`, `Оргил даалгавар 2`]];
+  TOPICS.forEach((t) => { const ts = getTopicState(t.id), sc = computeTopicScores(t); rows.push([s.name, s.className, s.region, t.code, t.title, ts.level ? LV[ts.level] : ``, sc.total, ts.togolCalcInput, ts.orgilText, ts.orgilText2]); });
+  return `\uFEFF` + rows.map((r) => r.map(q).join(`,`)).join(`\n`);
+}
+
+
+/* ===== Firebase: сурагчийн дүн → багшийн самбар ===== */
+const WANT_T = /[?&]teacher/.test(location.search);
+const FB_COL = `ws8`;
+let isTeacher = false, boardRows = [], pushTimer = null;
+let meId = ``;
+try { meId = localStorage.getItem(`ws8_me`) || ``; if (!meId) { meId = `s` + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); localStorage.setItem(`ws8_me`, meId); } } catch (e) { meId = `s` + Date.now().toString(36); }
+
+function answerText(t, ts) {
+  const cut = (x) => String(x || ``).trim().slice(0, 1500);
+  const out = [];
+  if (ts.level === `togol`) {
+    out.push(`Тооцоо: ${ts.togolCalcInput || `-`}`);
+    t.togol.tableRows.forEach((r, i) => { const a = cut(ts.togolTable[`r${i}_c1`]), c = cut(ts.togolTable[`r${i}_c2`]); if (a || c) out.push(`${r}: ${a || `-`} | ${c || `-`}`); });
+  } else if (ts.level === `orgil`) {
+    if (cut(ts.orgilText)) out.push(`Даалгавар 1: ${cut(ts.orgilText)}`);
+    if (cut(ts.orgilText2)) out.push(`Даалгавар 2: ${cut(ts.orgilText2)}`);
+  }
+  return out.join(`\n`).slice(0, 4000);
+}
+function pushStudent() {
+  if (!window.FBDB || WANT_T || isTeacher) return;
+  const st = appState.student;
+  if (!st.name || st.name.trim().length < 2) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(() => {
+    const topics = {}; let tot = 0;
+    TOPICS.forEach((t) => {
+      const ts = getTopicState(t.id), sc = computeTopicScores(t);
+      tot += sc.total;
+      if (ts.level) topics[t.id] = { lv: ts.level, sc: sc.total, a: answerText(t, ts) };
+    });
+    window.FBDB.set(FB_COL, meId, { name: st.name.trim().slice(0, 60), cls: String(st.className || ``).slice(0, 20), region: String(st.region || ``).slice(0, 40), tot, topics, t: Date.now() }).catch(() => {});
+  }, 1500);
+}
+const _persist = persistState;
+persistState = async function () { await _persist(); pushStudent(); };
+
+function teacherLogin() {
+  const m = document.getElementById(`t-msg`); m.textContent = ``;
+  window.FBAUTH.login(document.getElementById(`t-email`).value.trim(), document.getElementById(`t-pass`).value)
+    .then(() => location.reload()).catch(() => { m.textContent = `Имэйл эсвэл нууц үг буруу байна.`; });
+}
+function teacherLogout() { window.FBAUTH.logout().then(() => location.reload()); }
+
+function renderBoard() {
+  if (!isTeacher) return;
+  const rows = boardRows.slice().sort((a, b) => (a.cls || ``).localeCompare(b.cls || ``) || (a.name || ``).localeCompare(b.name || ``));
+  const avg = rows.length ? Math.round(rows.reduce((x, r) => x + (r.tot || 0), 0) / rows.length) : 0;
+  document.getElementById(`board-kpi`).innerHTML = [[`Бүртгэлтэй сурагч`, rows.length], [`Дундаж нийт оноо`, `${avg} / 180`], [`Сүүлд шинэчлэгдсэн`, rows.length ? new Date(Math.max(...rows.map((r) => r.t || 0))).toLocaleTimeString(`mn-MN`, { hour: `2-digit`, minute: `2-digit` }) : `-`]]
+    .map((k) => `<div><span class="metric-label">${k[0]}</span><span class="metric-value">${k[1]}</span></div>`).join(``);
+  document.getElementById(`board-topics`).innerHTML = TOPICS.map((t) => {
+    const e = rows.map((r) => r.topics && r.topics[t.id]).filter(Boolean);
+    const cnt = (k) => e.filter((x) => x.lv === k).length;
+    const a = e.length ? (e.reduce((x, y) => x + y.sc, 0) / e.length).toFixed(1) : `-`;
+    return `<tr><td><strong>${t.code}.</strong> ${escapeHtml(t.title)}</td><td>${cnt(`bulag`)}</td><td>${cnt(`togol`)}</td><td>${cnt(`orgil`)}</td><td>${a}</td></tr>`;
+  }).join(``);
+  document.getElementById(`board-students`).innerHTML = rows.length ? rows.map((r) => {
+    const chips = TOPICS.map((t) => { const e = r.topics && r.topics[t.id]; return e ? `<span class="st-chip">${t.code}·${LV[e.lv]} ${e.sc}</span>` : ``; }).join(``);
+    const det = TOPICS.map((t) => { const e = r.topics && r.topics[t.id]; return e && e.a ? `<div class="st-ans"><strong>Сэдэв ${t.code} · ${LV[e.lv]} · ${e.sc}/20</strong>\n${escapeHtml(e.a)}</div>` : ``; }).join(``);
+    return `<details class="st-det"><summary><strong>${escapeHtml(r.name)}</strong><span class="dossier-meta">${escapeHtml(r.cls || ``)}</span><span class="st-chip">Нийт ${r.tot || 0} / 180</span>${chips}</summary>${det || `<p class="task-hint">Бичгээр хариулсан хариулт хараахан алга.</p>`}</details>`;
+  }).join(``) : `<p class="task-hint">Одоогоор сурагч бүртгэгдээгүй байна.</p>`;
+  document.getElementById(`board-stamp`).textContent = `Шинэчлэгдсэн: ` + new Date().toLocaleTimeString(`mn-MN`, { hour: `2-digit`, minute: `2-digit` });
+}
+function exportBoardCSV() {
+  const q = (v) => `"${String(v == null ? `` : v).replace(/"/g, `""`).replace(/\r?\n/g, ` `)}"`;
+  const rows = [[`Сурагч`, `Анги`, `Аймаг/Дүүрэг`, `Нийт (180)`, `Сэдэв №`, `Даалгавар`, `Оноо (20)`, `Хариулт`]];
+  boardRows.forEach((r) => TOPICS.forEach((t) => { const e = r.topics && r.topics[t.id]; if (e) rows.push([r.name, r.cls, r.region, r.tot, t.code, LV[e.lv], e.sc, e.a]); }));
+  const csv = `﻿` + rows.map((r) => r.map(q).join(`,`)).join(`\n`);
+  const a = document.createElement(`a`); a.href = URL.createObjectURL(new Blob([csv], { type: `text/csv;charset=utf-8` }));
+  a.download = `8_angi_dun_${new Date().toISOString().slice(0, 10)}.csv`; document.body.appendChild(a); a.click(); a.remove();
+}
+async function resetBoard(btn) {
+  if (!isTeacher) return;
+  if (btn.dataset.armed !== `1`) { btn.dataset.armed = `1`; btn.textContent = `Баталгаажуулах: бүх сурагчийн дүн устна (дахин дарна уу)`; return; }
+  btn.dataset.armed = `0`; btn.textContent = `Шинэ хичээл эхлүүлэх (бүх сурагчийн дүнг устгах)`;
+  try { const ids = await window.FBDB.list(FB_COL); await Promise.all(ids.map((id) => window.FBDB.del(FB_COL, id))); } catch (e) {}
+}
+async function initTeacher() {
+  if (!WANT_T || !window.FBAUTH) return;
+  document.body.classList.add(`teacher-mode`);
+  const u = await Promise.race([window.FBAUTH.ready, new Promise((r) => setTimeout(() => r(null), 6000))]);
+  if (!u) { document.getElementById(`teacher-login`).classList.remove(`is-hidden`); return; }
+  isTeacher = true;
+  document.getElementById(`teacher-board`).classList.remove(`is-hidden`);
+  window.FBDB.watch(FB_COL, (r) => { boardRows = r; renderBoard(); }, () => {});
+  renderBoard();
+}
+document.addEventListener(`DOMContentLoaded`, initTeacher);
+
+document.addEventListener(`DOMContentLoaded`, initApp);
+</script>
+</body>
+</html>
